@@ -93,6 +93,31 @@ test('components and pages contain no hardcoded copy (text lives in site.ts)', (
   assert.deepEqual(bad, []);
 });
 
+function sectionHtml(html, startId, endId) {
+  return html.slice(html.indexOf(`id="${startId}"`), html.indexOf(`id="${endId}"`));
+}
+
+test('how it works renders four steps', () => {
+  const html = readFileSync(htmlPath, 'utf8');
+  const steps = sectionHtml(html, 'how-it-works', 'features').match(/<li[^>]*class="[^"]*\bstep\b[^"]*"/g) ?? [];
+  assert.equal(steps.length, 4);
+});
+
+test('features grid lists the six spec feature titles in order', () => {
+  const html = readFileSync(htmlPath, 'utf8');
+  const titles = [
+    ...sectionHtml(html, 'features', 'team').matchAll(/<h3[^>]*class="[^"]*feature-card__title[^"]*"[^>]*>([^<]*)<\/h3>/g),
+  ].map((m) => m[1]);
+  assert.deepEqual(titles, [
+    'Orchestrate a team of AI agents',
+    'Task decomposition',
+    'Budget control',
+    'Human approval gates',
+    'Sandboxed execution',
+    'Git branch per task',
+  ]);
+});
+
 test('footer headings are not h2 elements', () => {
   const html = readFileSync(htmlPath, 'utf8');
   const footer = html.slice(html.indexOf('<footer'));

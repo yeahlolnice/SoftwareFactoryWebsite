@@ -79,10 +79,15 @@ const { howItWorks } = site;
 
   @media (min-width: 768px) {
     .steps {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
     .step {
       flex-direction: column;
+    }
+  }
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 </style>

@@ -9,7 +9,8 @@
 //   - faq.items.platforms, faq.items.code-safe: confirm wording
 //   - faq.items.pricing: placeholder answer, no pricing yet
 //   - faq.items.support, footer.supportText: no contact details yet
-//   - features.items (titles marked TODO(PO)): confirm the claims
+//   - howItWorks.steps (marked TODO(PO)): confirm the four step titles and copy
+//   - features.items (marked TODO(PO)): confirm the six feature claims
 //   - screenshots: none supplied; the hero uses the CSS app mock (docs/design.md section 6)
 
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
@@ -20,7 +21,7 @@ export type IconName =
 
 export interface Link { label: string; href: string }
 export interface Cta { label: string; href: string; icon?: IconName; external?: boolean }
-export interface Step { number: 1 | 2 | 3; title: string; body: string; icon: IconName }
+export interface Step { number: 1 | 2 | 3 | 4; title: string; body: string; icon: IconName }
 export interface Feature { id: string; title: string; body: string; icon: IconName }
 export interface AgentRole {
   id: string;
@@ -136,6 +137,7 @@ export const PLACEHOLDERS = [
   'download.version',
   'download.platformNote',
   'download.requirements',
+  'howItWorks.steps',
   'features.items',
   'faq.items.platforms',
   'faq.items.code-safe',
@@ -272,27 +274,33 @@ export const site: Site = {
 
   howItWorks: {
     eyebrow: 'How it works',
-    title: 'From goal to shipped project in three steps',
+    title: 'From goal to shipped project in four steps',
     lead: 'You set direction. The team handles the handoffs.',
     cta: { label: 'Download and try it', href: '#download' },
     steps: [
       {
         number: 1,
-        title: 'Describe the project',
-        body: 'Tell your Project Manager agent what you want built. It turns the goal into a plan of scoped, prioritised tasks.',
+        title: 'Describe your objective', // TODO(PO): confirm
+        body: 'Tell your Project Manager agent what you want built, in plain language.', // TODO(PO): confirm
         icon: 'plan',
       },
       {
         number: 2,
-        title: 'Assemble your team',
-        body: 'Pick the roles you need — designer, frontend, backend, DevOps, QA. Each agent works its own task in its own isolated workspace.',
-        icon: 'users',
+        title: 'Review the plan', // TODO(PO): confirm
+        body: 'It breaks the goal into scoped, prioritised tasks. Approve or adjust the plan before any work starts.', // TODO(PO): confirm
+        icon: 'steer',
       },
       {
         number: 3,
-        title: 'Watch it ship',
-        body: 'Follow the task board and live log as agents hand work to each other, run tests and report back. Step in, redirect or approve whenever you like.',
-        icon: 'board',
+        title: 'Agents build', // TODO(PO): confirm
+        body: 'Your team works each task in its own isolated workspace, running tests and handing work to the next role.', // TODO(PO): confirm
+        icon: 'users',
+      },
+      {
+        number: 4,
+        title: 'Review and ship', // TODO(PO): confirm
+        body: 'Check the finished work, approve it, and merge when you are happy.', // TODO(PO): confirm
+        icon: 'branch',
       },
     ],
   },
@@ -304,40 +312,40 @@ export const site: Site = {
     closing: { label: 'Meet the agent roles', href: '#team' },
     items: [
       {
-        id: 'agent-roles',
-        title: 'Agent roles',
-        body: 'Give every agent a job: PM, architect, designer, developers, QA. Roles keep work focused and handoffs clear.',
+        id: 'agent-orchestration',
+        title: 'Orchestrate a team of AI agents', // TODO(PO): confirm
+        body: 'Assign each agent a role, such as PM, designer, developers or QA, and manage the whole team from one desktop app.', // TODO(PO): confirm
         icon: 'users',
       },
       {
-        id: 'task-board',
-        title: 'Task board',
-        body: 'A live board tracks every task from backlog to done, with priorities, owners and status at a glance.',
-        icon: 'board',
+        id: 'task-decomposition',
+        title: 'Task decomposition', // TODO(PO): confirm
+        body: 'The PM agent turns your goal into scoped, prioritised tasks that the team works through.', // TODO(PO): confirm
+        icon: 'plan',
       },
       {
-        id: 'live-log',
-        title: 'Live activity log',
-        body: 'See what each agent is doing as it happens — commands run, files changed, messages sent.',
-        icon: 'terminal',
-      },
-      {
-        id: 'isolated-workspaces',
-        title: 'Isolated workspaces', // TODO(PO): confirm
-        body: 'Agents work on their own task branches in sandboxed environments, so your main code stays safe until you merge.',
-        icon: 'branch',
-      },
-      {
-        id: 'review-testing',
-        title: 'Built-in review and testing', // TODO(PO): confirm
-        body: 'QA agents write and run tests; completed work is reported with what was verified, not just what was attempted.',
+        id: 'budget-control',
+        title: 'Budget control', // TODO(PO): confirm
+        body: 'Set a spend limit for the project and watch the cost as agents work.', // TODO(PO): confirm
         icon: 'shield-check',
       },
       {
-        id: 'you-stay-in-control',
-        title: 'You stay in control', // TODO(PO): confirm
-        body: 'Approve plans, answer questions from your team and redirect work at any point. The product owner is always you.',
+        id: 'approval-gates',
+        title: 'Human approval gates', // TODO(PO): confirm
+        body: 'Approve the plan, answer questions and redirect work at key points, so you stay the product owner.', // TODO(PO): confirm
         icon: 'steer',
+      },
+      {
+        id: 'sandboxed-execution',
+        title: 'Sandboxed execution', // TODO(PO): confirm
+        body: 'Agents run commands in isolated environments, away from your main setup.', // TODO(PO): confirm
+        icon: 'terminal',
+      },
+      {
+        id: 'branch-per-task',
+        title: 'Git branch per task', // TODO(PO): confirm
+        body: 'Every task gets its own branch, so main stays safe until you merge.', // TODO(PO): confirm
+        icon: 'branch',
       },
     ],
   },
