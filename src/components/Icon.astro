@@ -1,0 +1,53 @@
+---
+import type { IconName } from '../data/site';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  label?: string;
+}
+
+const { name, size = 24, label } = Astro.props;
+
+// 24x24 viewBox, stroke icons drawn with currentColor.
+const paths: Record<IconName, string> = {
+  users: 'M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20M10 12a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5ZM20 20v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 5.65a3.25 3.25 0 0 1 0 6.2',
+  board: 'M4 5h16v14H4zM9.5 5v14M14.5 5v14',
+  terminal: 'M4 5h16v14H4zM7.5 10l3 2.5-3 2.5M13 15h4',
+  branch: 'M7 4v10M7 18a2 2 0 1 0 0 .01M17 8a2 2 0 1 0 0 .01M7 6a2 2 0 1 0 0-.01M17 10c0 4-10 2-10 6',
+  'shield-check': 'M12 3l7 3v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6zM8.75 12l2.25 2.25L15.5 9.75',
+  steer: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM3.5 10.5h5.4M15.1 10.5h5.4M12 13.5V20.5',
+  plan: 'M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1ZM8 6H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2M9 12h6M9 16h4',
+  palette: 'M12 3a9 9 0 0 0 0 18c1.4 0 2-.9 2-1.8 0-1.2-1-1.6-1-2.7 0-.9.7-1.5 1.6-1.5H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3ZM7.5 11.5h.01M10 7.5h.01M14.5 7.5h.01',
+  code: 'M8.5 8L4.5 12l4 4M15.5 8l4 4-4 4M13.5 5.5l-3 13',
+  server: 'M4 4.5h16v6H4zM4 13.5h16v6H4zM7.5 7.5h.01M7.5 16.5h.01',
+  cloud: 'M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 9z',
+  bug: 'M9 7.5a3 3 0 0 1 6 0M8 10h8v4.5a4 4 0 0 1-8 0zM12 10v9M4 11.5l4 1M20 11.5l-4 1M4.5 18l3.5-2M19.5 18L16 16M5 6.5l3 2M19 6.5l-3 2',
+  search: 'M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.5 15.5L20 20',
+  windows: 'M4 5.5l7-1v7H4zM12.5 4.3L20 3.2v8.3h-7.5zM4 12.5h7v7l-7-1zM12.5 12.5H20v8.3l-7.5-1.1z',
+  download: 'M12 4v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14',
+  'chevron-down': 'M6 9l6 6 6-6',
+  menu: 'M4 7h16M4 12h16M4 17h16',
+  close: 'M6 6l12 12M18 6L6 18',
+  check: 'M5 12.5l4.5 4.5L19 7.5',
+  'arrow-right': 'M5 12h14M13 6l6 6-6 6',
+};
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+>
+  <path d={paths[name]}></path>
+</svg>

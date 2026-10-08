@@ -1,0 +1,181 @@
+---
+import { site } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+---
+
+<header class="header" id="top">
+  <div class="container header__inner">
+    <a class="header__logo" href="#top" aria-label={site.layout.logoLabel}>
+      <Logo />
+    </a>
+
+    <nav class="nav" id="primary-nav" aria-label={site.layout.primaryNavLabel}>
+      <ul class="nav__list">
+        {
+          site.nav.map((link) => (
+            <li>
+              <a class="nav__link" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <Button href="#download">{site.layout.downloadNavLabel}</Button>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-controls="primary-nav"
+        aria-expanded="false"
+        aria-label={site.layout.menuLabel}
+      >
+        <span class="menu-toggle__open"><Icon name="menu" /></span>
+        <span class="menu-toggle__close"><Icon name="close" /></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const nav = document.getElementById('primary-nav');
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.toggleAttribute('data-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: var(--header-h);
+  }
+  .header__logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+  }
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    padding: 0;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+  :global(html.js) .menu-toggle {
+    display: inline-flex;
+  }
+  .menu-toggle__close,
+  .menu-toggle[aria-expanded='true'] .menu-toggle__open {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] .menu-toggle__close {
+    display: inline-flex;
+  }
+
+  /* Mobile panel: below the header, full width, hidden until opened. */
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav[data-open] {
+    display: block;
+  }
+  .nav__list {
+    display: grid;
+    margin-inline: auto;
+    max-width: calc(var(--container) + 2 * var(--gutter));
+    padding-inline: var(--gutter);
+  }
+  .nav__link {
+    display: flex;
+    align-items: center;
+    min-height: 3.5rem;
+    color: var(--text);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+  }
+  .nav__link:hover {
+    color: var(--accent-hover);
+  }
+
+  @media (min-width: 640px) {
+    .nav__list {
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-6);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav {
+      position: static;
+      display: block;
+      background: none;
+      border: 0;
+    }
+    .nav__list {
+      display: flex;
+      gap: var(--space-2);
+      padding-inline: 0;
+      max-width: none;
+    }
+    .nav__link {
+      min-height: var(--tap-target);
+      padding-inline: var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+    :global(html.js) .menu-toggle,
+    .menu-toggle {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,110 @@
+---
+import { site } from '../data/site';
+import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
+
+const columns = site.footer.columns.map((col) => ({ ...col, links: [...col.links] }));
+const help = columns.find((c) => c.heading === 'Help');
+if (site.footer.supportUrl && help) {
+  help.links.push({ label: 'Support', href: site.footer.supportUrl });
+}
+const legalLinks = [
+  site.legal?.privacyUrl && { label: 'Privacy', href: site.legal.privacyUrl },
+  site.legal?.termsUrl && { label: 'Terms', href: site.legal.termsUrl },
+].filter((l): l is { label: string; href: string } => Boolean(l));
+if (legalLinks.length) columns.push({ heading: 'Legal', links: legalLinks });
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo />
+        <p class="footer__tagline">{site.tagline}</p>
+      </div>
+      {
+        columns.map((col) => (
+          <nav class="footer__col" aria-label={col.heading}>
+            <h2 class="footer__heading">{col.heading}</h2>
+            <ul>
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+    <p class="footer__copy">© {year} {site.companyName}. {site.footer.copyright}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: var(--space-16) var(--space-8);
+    background: var(--bg-deep);
+    border-top: 1px solid var(--border);
+  }
+  .footer__grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .footer__tagline {
+    margin-top: var(--space-3);
+    max-width: 40ch;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+  }
+  .footer__heading {
+    margin-bottom: var(--space-3);
+    color: var(--text-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-xs);
+    letter-spacing: var(--tracking-xs);
+    text-transform: uppercase;
+  }
+  .footer__col ul {
+    display: grid;
+  }
+  .footer__col a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .footer__col a:hover {
+    color: var(--accent-hover);
+  }
+  .footer__copy {
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border);
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 768px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .footer__grid {
+      grid-template-columns: 2fr repeat(3, 1fr);
+    }
+    .footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

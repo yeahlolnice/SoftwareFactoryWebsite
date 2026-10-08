@@ -1,0 +1,46 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  wordmark?: boolean;
+  size?: number;
+}
+
+const { wordmark = true, size = 28 } = Astro.props;
+---
+
+<span class="logo">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 28 28"
+    width={size}
+    height={size}
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <circle cx="14" cy="14" r="4"></circle>
+    <path d="M14 3v4M14 21v4M3 14h4M21 14h4M6.2 6.2l2.8 2.8M19 19l2.8 2.8M21.8 6.2L19 9M9 19l-2.8 2.8"></path>
+  </svg>
+  {wordmark && <span class="logo__text">{site.productName}</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--accent);
+  }
+  .logo__text {
+    color: var(--text);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-h3);
+    white-space: nowrap;
+  }
+</style>

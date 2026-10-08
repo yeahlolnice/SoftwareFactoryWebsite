@@ -1,0 +1,118 @@
+/* Design tokens — source of truth: docs/design.md sections 4-5.
+   Breakpoints (min-width, cannot be custom properties): sm 640px, md 768px, lg 1024px, xl 1280px. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces and borders */
+  --bg-deep: #080b0f;
+  --bg: #0b0f14;
+  --surface: #121820;
+  --surface-raised: #1a222d;
+  --surface-overlay: #222c39;
+  --border: #2a3441;
+  --border-control: #66768a;
+
+  /* Text */
+  --text: #e6edf3;
+  --text-muted: #9aa7b5;
+  --text-subtle: #7d8a99; /* never on --surface-overlay, never below 12px */
+
+  /* Accent and semantic colours */
+  --accent: #3ddc97;
+  --accent-hover: #6ae8b2;
+  --accent-tint: #0f2a21;
+  --on-accent: #06130d;
+  --info: #5cb8ff;
+  --warn: #f5b544;
+  --danger: #ff6b6b;
+  --violet: #a78bfa;
+
+  /* Derived (alpha mixes of the tokens above) */
+  --header-bg: color-mix(in srgb, var(--bg) 85%, transparent);
+  --glow-accent: color-mix(in srgb, var(--accent) 12%, transparent);
+  --grid-line: color-mix(in srgb, #fff 4%, transparent);
+  --shadow-mock: 0 40px 80px -20px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.03);
+
+  /* Font stacks (no web fonts) */
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace;
+
+  /* Type scale (fluid 360px -> 1280px) */
+  --text-h1: clamp(2.125rem, 1.587rem + 2.391vw, 3.5rem);
+  --text-h2: clamp(1.75rem, 1.4076rem + 1.522vw, 2.625rem);
+  --text-h3: clamp(1.25rem, 1.1522rem + 0.435vw, 1.5rem);
+  --text-lead: clamp(1.0625rem, 0.9891rem + 0.326vw, 1.25rem);
+  --text-base: 1rem;
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
+
+  --leading-h1: 1.08;
+  --leading-h2: 1.15;
+  --leading-h3: 1.25;
+  --leading-lead: 1.55;
+  --leading-base: 1.6;
+  --leading-sm: 1.5;
+  --leading-xs: 1.4;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-h1: -0.02em;
+  --tracking-h2: -0.015em;
+  --tracking-h3: -0.01em;
+  --tracking-xs: 0.04em;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --section-pad: clamp(4rem, 2.6304rem + 6.087vw, 7.5rem);
+  --gutter: clamp(1.25rem, 0.9565rem + 1.304vw, 2rem);
+  --section-gap: var(--space-10); /* section header -> content; 56px from lg up */
+  --card-pad: var(--space-5);
+  --grid-gap: var(--space-4);
+
+  /* Layout */
+  --container: 1200px;
+  --container-wide: 1120px;
+  --prose: 65ch;
+  --faq-width: 760px;
+  --header-h: 3.5rem;
+  --anchor-offset: 5rem;
+  --tap-target: 2.75rem;
+
+  /* Shape */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --ease: ease-in-out;
+
+  /* Stacking */
+  --z-header: 50;
+  --z-skip: 100;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 4rem;
+    --section-gap: 3.5rem;
+    --card-pad: 1.75rem;
+    --grid-gap: var(--space-6);
+  }
+}
