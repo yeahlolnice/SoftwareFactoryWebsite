@@ -45,26 +45,27 @@ Hidden by default (`site.proof` empty array → section not rendered). If popula
 
 ### 2.3 How it works (`id="how-it-works"`)
 - Eyebrow: `How it works`
-- **H2:** "From goal to shipped project in three steps"
+- **H2:** "From goal to shipped project in four steps"
 - Supporting: "You set direction. The team handles the handoffs."
-- Three numbered steps (cards, horizontal ≥768, vertical below), each with number, icon, title, 1–2 sentence body:
-  1. **Describe the project** — "Tell your Project Manager agent what you want built. It turns the goal into a plan of scoped, prioritised tasks."
-  2. **Assemble your team** — "Pick the roles you need — designer, frontend, backend, DevOps, QA. Each agent works its own task in its own isolated workspace."
-  3. **Watch it ship** — "Follow the task board and live log as agents hand work to each other, run tests and report back. Step in, redirect or approve whenever you like."
+- Four numbered steps (cards: 4 across ≥1024, 2×2 at 768–1023, vertical below 768), each with number, icon, title, 1–2 sentence body *(copy confirm with owner)*:
+  1. **Describe your objective** (icon `plan`) — "Tell your Project Manager agent what you want built, in plain language."
+  2. **Review the plan** (icon `steer`) — "It breaks the goal into scoped, prioritised tasks. Approve or adjust the plan before any work starts."
+  3. **Agents build** (icon `users`) — "Your team works each task in its own isolated workspace, running tests and handing work to the next role."
+  4. **Review and ship** (icon `branch`) — "Check the finished work, approve it, and merge when you are happy."
 - CTA: text link **Download and try it** → `#download`.
 
 ### 2.4 Features (`id="features"`)
 - Eyebrow: `Features`
 - **H2:** "Everything you need to run an AI team"
 - Supporting: "One desktop app. No glue scripts, no tab-juggling between assistants."
-- Grid of 6 feature cards (3×2 desktop, 2×3 tablet, 1×6 mobile). Each: 24px icon in a 40px tinted square, title (h3), body ≤ 25 words. Copy (final text lives in `site.features.items`):
-  1. **Agent roles** — "Give every agent a job: PM, architect, designer, developers, QA. Roles keep work focused and handoffs clear."
-  2. **Task board** — "A live board tracks every task from backlog to done, with priorities, owners and status at a glance."
-  3. **Live activity log** — "See what each agent is doing as it happens — commands run, files changed, messages sent."
-  4. **Isolated workspaces** — "Agents work on their own task branches in sandboxed environments, so your main code stays safe until you merge."
-  5. **Built-in review and testing** — "QA agents write and run tests; completed work is reported with what was verified, not just what was attempted."
-  6. **You stay in control** — "Approve plans, answer questions from your team and redirect work at any point. The product owner is always you."
-- Features 4–6 reflect behaviour visible in the product's team workflow *(confirm each with owner)*.
+- Grid of 6 feature cards (3×2 desktop, 2×3 tablet, 1×6 mobile). Each: 24px icon in a 40px tinted square, title (h3), one-sentence body ≤ 25 words. Copy (final text lives in `site.features.items`):
+  1. **Orchestrate a team of AI agents** (icon `users`) — "Assign each agent a role, such as PM, designer, developers or QA, and manage the whole team from one desktop app." *(confirm with owner)*
+  2. **Task decomposition** (icon `plan`) — "The PM agent turns your goal into scoped, prioritised tasks that the team works through." *(confirm with owner)*
+  3. **Budget control** (icon `shield-check`) — "Set a spend limit for the project and watch the cost as agents work." *(confirm with owner)*
+  4. **Human approval gates** (icon `steer`) — "Approve the plan, answer questions and redirect work at key points, so you stay the product owner." *(confirm with owner)*
+  5. **Sandboxed execution** (icon `terminal`) — "Agents run commands in isolated environments, away from your main setup." *(confirm with owner)*
+  6. **Git branch per task** (icon `branch`) — "Every task gets its own branch, so main stays safe until you merge." *(confirm with owner)*
+- The former task board, live activity log and review/testing points are covered by the hero mock and How it works step 3, not by feature cards.
 - CTA: none inside the grid (avoid competing CTAs); closing line under grid links to `#team`.
 
 ### 2.5 Agent team (`id="team"`)
@@ -335,7 +336,7 @@ Every component is an Astro component in `src/components/` unless noted. "Data" 
 | `SectionHeader.astro` | Eyebrow + H2 + supporting copy | left (default), center | `eyebrow`, `title`, `lead` |
 | `Hero.astro` | H1, lead, CTAs, microcopy, mock | — | `site.hero` |
 | `AppMock.astro` | The animated mock (section 6) | `desktop`, `mobile`, `static` (reduced motion) | `site.mock` (agents, cards, log) |
-| `Steps.astro` / `StepCard` | How-it-works steps | numbered 1–3 | `site.howItWorks.steps` |
+| `Steps.astro` / `StepCard` | How-it-works steps | numbered 1–4 | `site.howItWorks.steps` |
 | `FeatureCard.astro` | Icon + title + body | default, hover (border → `--border-control`, `translateY(-2px)`) | `site.features.items[]` |
 | `RoleCard.astro` | Avatar, role, responsibility, outputs chips | by role colour | `site.team.roles[]` |
 | `HandoffDiagram.astro` | Plan→Ship SVG chain | static | `site.team.handoff[]` |
@@ -453,7 +454,7 @@ export interface Site {
   proof: { text: string; href?: string }[];
 
   /** How it works */
-  howItWorks: { eyebrow: string; title: string; lead: string; cta: Link; steps: Step[] };  // 3 steps
+  howItWorks: { eyebrow: string; title: string; lead: string; cta: Link; steps: Step[] };  // 4 steps
 
   /** Features */
   features: { eyebrow: string; title: string; lead: string; items: Feature[] };            // 6 items
@@ -474,7 +475,7 @@ export interface Site {
   social?: Link[];              // empty/undefined → no icons rendered
 }
 
-export interface Step     { number: 1 | 2 | 3; title: string; body: string; icon: IconName }
+export interface Step     { number: 1 | 2 | 3 | 4; title: string; body: string; icon: IconName }
 export interface Feature  { id: string; title: string; body: string; icon: IconName }       // body ≤ 25 words
 export interface AgentRole {
   id: string;                   // kebab-case, unique: 'project-manager'
@@ -493,7 +494,7 @@ export interface MockLogLine{ time: string; agent: string; color: RoleColor; mes
 ```
 
 Constraints (QA can assert against these):
-- `features.items.length === 6`, `team.roles.length` ∈ {7, 8}, `faq.items.length >= 5`, `howItWorks.steps.length === 3`, `mock.agents.length === 5`, `mock.log.length === 12`, `mock.columns.length === 4`.
+- `features.items.length === 6`, `team.roles.length` ∈ {7, 8}, `faq.items.length >= 5`, `howItWorks.steps.length === 4`, `mock.agents.length === 5`, `mock.log.length === 12`, `mock.columns.length === 4`.
 - All `href`s are `#`-anchors that exist as section ids, or absolute `https://` URLs.
 - `id`s unique within their arrays.
 - No field contains HTML; components escape text. Line-breaks aren't used.
@@ -516,4 +517,4 @@ Constraints (QA can assert against these):
 - **Frontend Content Dev:** author `site.ts` per section 9 using the copy in section 2 verbatim; mark placeholders; implement section components.
 - **SEO Specialist:** `seo`, FAQ JSON-LD (`FAQPage`), `SoftwareApplication` JSON-LD (`operatingSystem: Windows`, `applicationCategory: DeveloperApplication`, offers omitted until pricing exists), sitemap/robots, OG image placeholder. Visible copy and structured data must match.
 - **QA:** assertions listed under 9 constraints; axe at 360/1280; no horizontal overflow at 320/360/768/1280/1920; reduced-motion renders static final frame; keyboard path: skip link → nav → CTA → FAQ summaries all reachable with visible focus.
-- **Open questions for the Project Manager / product owner:** final product name and tagline; real download URL and version; Windows version support; confirmation of features 4–6 and FAQ answers marked *(confirm)*; pricing/support/legal links; whether to commission real screenshots to replace the mock later (the `AppMock` is isolated so it can be swapped for an `<img>` without touching other sections).
+- **Open questions for the Project Manager / product owner:** final product name and tagline; real download URL and version; Windows version support; confirmation of the four How it works steps, the six feature cards and FAQ answers marked *(confirm)*; pricing/support/legal links; whether to commission real screenshots to replace the mock later (the `AppMock` is isolated so it can be swapped for an `<img>` without touching other sections).

@@ -1,0 +1,163 @@
+---
+import { site } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import SectionHeader from './SectionHeader.astro';
+
+const { team } = site;
+---
+
+<section id="team" class="section" aria-labelledby="team-heading">
+  <div class="container">
+    <SectionHeader id="team-heading" eyebrow={team.eyebrow} title={team.title} lead={team.lead} />
+    <ul class="role-grid section__body">
+      {
+        team.roles.map((role) => (
+          <li class:list={['role-card', `role-card--${role.color}`]}>
+            <span class="role-card__avatar">
+              <Icon name={role.icon} size={20} />
+            </span>
+            <h3 class="role-card__name">{role.name}</h3>
+            <p class="role-card__summary">{role.summary}</p>
+            <ul class="role-card__outputs">
+              {role.outputs.map((output) => (
+                <li>{output}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+    <ol class="handoff section__body">
+      {
+        team.handoff.map((stage, index) => (
+          <li class="handoff__stage">
+            {index > 0 && (
+              <span class="handoff__arrow">
+                <Icon name="arrow-right" size={16} />
+              </span>
+            )}
+            {stage}
+          </li>
+        ))
+      }
+    </ol>
+    <div class="section__cta">
+      <Button href={team.cta.href} external={team.cta.external} download cta="download" variant="secondary">
+        {team.cta.label}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gap);
+  }
+  .role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .role-card--accent {
+    --role: var(--accent);
+  }
+  .role-card--violet {
+    --role: var(--violet);
+  }
+  .role-card--info {
+    --role: var(--info);
+  }
+  .role-card--warn {
+    --role: var(--warn);
+  }
+  .role-card--danger {
+    --role: var(--danger);
+  }
+  .role-card__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--role);
+    background: color-mix(in srgb, var(--role) 18%, transparent);
+    border: 1.5px solid var(--role);
+    border-radius: var(--radius-pill);
+  }
+  .role-card__name {
+    margin-top: var(--space-3);
+    font-size: var(--text-base);
+    line-height: var(--leading-sm);
+  }
+  .role-card__summary {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+  }
+  .role-card__outputs {
+    display: none;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+  .role-card__outputs li {
+    padding: var(--space-1) var(--space-2);
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-xs);
+  }
+
+  .handoff {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .handoff__stage {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text);
+  }
+  .handoff__arrow {
+    display: inline-flex;
+    color: var(--text-subtle);
+    transform: rotate(90deg);
+  }
+
+  @media (min-width: 640px) {
+    .role-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .role-card__outputs {
+      display: flex;
+    }
+    .handoff {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .handoff__arrow {
+      transform: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .role-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
