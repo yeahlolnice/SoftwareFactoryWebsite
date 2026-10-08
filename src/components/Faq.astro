@@ -1,0 +1,13 @@
+---
+import { site } from '../data/site';
+import SectionHeader from './SectionHeader.astro';
+
+const { faq } = site;
+---
+
+<section id="faq" class="section section--surface" aria-labelledby="faq-heading">
+  <div class="container">
+    <SectionHeader id="faq-heading" eyebrow={faq.eyebrow} title={faq.title} />
+    {/* TODO(TASK-003/004): FAQ accordion */}
+  </div>
+</section>

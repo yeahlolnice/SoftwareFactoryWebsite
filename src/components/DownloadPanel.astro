@@ -1,0 +1,13 @@
+---
+import { site } from '../data/site';
+import SectionHeader from './SectionHeader.astro';
+
+const { download } = site;
+---
+
+<section id="download" class="section" aria-labelledby="download-heading">
+  <div class="container">
+    <SectionHeader id="download-heading" eyebrow={download.eyebrow} title={download.heading} lead={download.lead} />
+    {/* TODO(TASK-003/004): download panel content */}
+  </div>
+</section>

@@ -1,0 +1,90 @@
+---
+import type { IconName } from '../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'md' | 'lg';
+  icon?: IconName;
+  external?: boolean;
+  download?: boolean;
+  cta?: string;
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  external = false,
+  download = false,
+  cta,
+  class: className,
+} = Astro.props;
+---
+
+<a
+  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+  href={href}
+  rel={external ? 'noopener' : undefined}
+  download={download ? '' : undefined}
+  data-cta={cta}
+>
+  {icon && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
+  <span><slot /></span>
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn--lg {
+    min-height: 3.5rem;
+    padding-inline: var(--space-8);
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-hover);
+    color: var(--on-accent);
+  }
+  .btn--secondary {
+    background: var(--surface-raised);
+    color: var(--text);
+  }
+  .btn--secondary:hover {
+    background: var(--surface-overlay);
+    color: var(--text);
+  }
+  .btn--ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border-control);
+  }
+  .btn--ghost:hover {
+    color: var(--accent-hover);
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+import { site } from '../data/site';
+import SectionHeader from './SectionHeader.astro';
+
+const { features } = site;
+---
+
+<section id="features" class="section section--surface" aria-labelledby="features-heading">
+  <div class="container">
+    <SectionHeader id="features-heading" eyebrow={features.eyebrow} title={features.title} lead={features.lead} />
+    {/* TODO(TASK-003/004): section content */}
+  </div>
+</section>
