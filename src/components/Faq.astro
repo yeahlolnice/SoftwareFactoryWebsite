@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
 
 const { faq } = site;
@@ -7,7 +8,75 @@ const { faq } = site;
 
 <section id="faq" class="section section--surface" aria-labelledby="faq-heading">
   <div class="container">
-    <SectionHeader id="faq-heading" eyebrow={faq.eyebrow} title={faq.title} />
-    {/* TODO(TASK-003/004): FAQ accordion */}
+    <SectionHeader id="faq-heading" eyebrow={faq.eyebrow} title={faq.title} align="center" />
+    <div class="faq section__body">
+      {
+        faq.items.map((item) => (
+          <details class="faq__item">
+            <summary class="faq__question">
+              <span>{item.question}</span>
+              <span class="faq__chevron">
+                <Icon name="chevron-down" size={20} />
+              </span>
+            </summary>
+            <p class="faq__answer">{item.answer}</p>
+          </details>
+        ))
+      }
+    </div>
   </div>
 </section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--faq-width);
+    margin-inline: auto;
+  }
+  .faq__item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .faq__item[open] {
+    border-color: var(--border-control);
+  }
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 3.5rem;
+    padding: var(--space-3) var(--space-5);
+    color: var(--text);
+    font-size: var(--text-lead);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-sm);
+    cursor: pointer;
+    list-style: none;
+    border-radius: var(--radius-md);
+  }
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+  .faq__question:hover {
+    color: var(--accent-hover);
+  }
+  .faq__chevron {
+    display: inline-flex;
+    flex: none;
+    color: var(--text-muted);
+    transition: transform var(--dur-base) var(--ease);
+  }
+  .faq__item[open] .faq__chevron {
+    transform: rotate(180deg);
+  }
+  .faq__answer {
+    padding: 0 var(--space-5) var(--space-5);
+    max-width: 65ch;
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+  }
+</style>

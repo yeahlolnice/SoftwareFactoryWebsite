@@ -1,5 +1,16 @@
 // All editable copy lives here. Components format this data but never invent text.
-// Values marked TODO(PO) must be confirmed by the product owner before launch.
+//
+// PLACEHOLDERS: values the product owner must supply or confirm before launch.
+// Each is also marked TODO(PO) next to its value below.
+//   - productName, companyName, tagline, siteUrl: identity and canonical origin (example.com until set)
+//   - download.url: real installer URL (currently example.com)
+//   - download.version: installer version (currently v0.0.0)
+//   - download.platformNote, download.requirements: confirm Windows 10/11 support; add RAM/storage if known
+//   - faq.items.platforms, faq.items.code-safe: confirm wording
+//   - faq.items.pricing: placeholder answer, no pricing yet
+//   - faq.items.support, footer.supportText: no contact details yet
+//   - features.items (titles marked TODO(PO)): confirm the claims
+//   - screenshots: none supplied; the hero uses the CSS app mock (docs/design.md section 6)
 
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
 export type IconName =
@@ -64,6 +75,9 @@ export interface Site {
     version: string;
     platformNote: string;
     releaseNotesUrl?: string;
+    releaseNotesLabel: string;
+    requirementsLabel: string;
+    requirements: { label: string; value: string }[];
     eyebrow: string;
     heading: string;
     lead: string;
@@ -121,8 +135,12 @@ export const PLACEHOLDERS = [
   'download.url',
   'download.version',
   'download.platformNote',
+  'download.requirements',
+  'features.items',
   'faq.items.platforms',
+  'faq.items.code-safe',
   'faq.items.pricing',
+  'faq.items.support',
   'footer.supportText',
 ] as const;
 
@@ -144,6 +162,11 @@ export const site: Site = {
     label: 'Download for Windows',
     version,
     platformNote,
+    releaseNotesLabel: 'Release notes',
+    requirementsLabel: 'System requirements',
+    requirements: [
+      { label: 'Operating system', value: 'Windows 10 or Windows 11, 64-bit' }, // TODO(PO): add RAM and storage once confirmed
+    ],
     eyebrow: 'Download',
     heading: 'Put your AI team to work',
     lead: `Download ${productName} for Windows and run your first project today.`,

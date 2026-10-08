@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
 
 const { features } = site;
@@ -8,6 +9,69 @@ const { features } = site;
 <section id="features" class="section section--surface" aria-labelledby="features-heading">
   <div class="container">
     <SectionHeader id="features-heading" eyebrow={features.eyebrow} title={features.title} lead={features.lead} />
-    {/* TODO(TASK-003/004): section content */}
+    <ul class="feature-grid section__body">
+      {
+        features.items.map((item) => (
+          <li class="feature-card">
+            <span class="feature-card__icon">
+              <Icon name={item.icon} size={24} />
+            </span>
+            <h3 class="feature-card__title">{item.title}</h3>
+            <p class="feature-card__body">{item.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="section__cta">
+      <a class="text-link" href={features.closing.href}>
+        {features.closing.label}
+        <Icon name="arrow-right" size={18} />
+      </a>
+    </p>
   </div>
 </section>
+
+<style>
+  .feature-grid {
+    display: grid;
+    gap: var(--grid-gap);
+  }
+  .feature-card {
+    padding: var(--card-pad);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .feature-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-radius: var(--radius-md);
+  }
+  .feature-card__title {
+    margin-top: var(--space-5);
+    font-size: var(--text-lead);
+    line-height: var(--leading-h3);
+  }
+  .feature-card__body {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+  }
+
+  @media (min-width: 640px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .feature-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
