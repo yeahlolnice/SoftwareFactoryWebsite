@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import { site } from '../data/site';
+---
+
+<Base title={site.notFound.title} description={site.notFound.body}>
+  <section class="not-found" aria-labelledby="not-found-heading">
+    <h1 id="not-found-heading">{site.notFound.heading}</h1>
+    <p>{site.notFound.body}</p>
+    <Button href="/" variant="primary">{site.notFound.homeCta}</Button>
+  </section>
+</Base>
+
+<style>
+  .not-found {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-5);
+    min-height: 60vh;
+    padding: var(--section-pad) var(--gutter);
+    text-align: center;
+  }
+  .not-found h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    letter-spacing: var(--tracking-h1);
+  }
+  .not-found p {
+    max-width: var(--prose);
+    color: var(--text-muted);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+  }
+</style>
