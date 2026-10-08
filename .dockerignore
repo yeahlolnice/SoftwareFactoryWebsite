@@ -1,0 +1,14 @@
+.git
+.github
+.astro
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+node_modules
+dist
+docs
+tests
+*.log
+.env
+.env.*

@@ -109,6 +109,7 @@ export interface Site {
     supportText: string;
     copyright: string;
   };
+  notFound: { title: string; heading: string; body: string; homeCta: string };
   social?: Link[];
 }
 
@@ -446,6 +447,13 @@ export const site: Site = {
     downloadNavLabel: 'Download',
     logoLabel: `${productName} home`,
     proofLabel: 'Proof',
+  },
+
+  notFound: {
+    title: `Page not found — ${productName}`,
+    heading: 'Page not found',
+    body: 'The page you were looking for does not exist or has moved.',
+    homeCta: 'Back to home',
   },
 
   footer: {

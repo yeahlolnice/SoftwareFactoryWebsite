@@ -5,5 +5,6 @@ export default defineConfig({
   site: site.siteUrl,
   output: 'static',
   compressHTML: true,
+  build: { inlineStylesheets: 'never' },
   devToolbar: { enabled: false },
 });
