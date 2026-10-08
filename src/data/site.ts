@@ -64,6 +64,7 @@ export interface Site {
     version: string;
     platformNote: string;
     releaseNotesUrl?: string;
+    eyebrow: string;
     heading: string;
     lead: string;
   };
@@ -101,14 +102,13 @@ export interface Site {
     menuLabel: string;
     downloadNavLabel: string;
     logoLabel: string;
+    proofLabel: string;
   };
   footer: {
     columns: { heading: string; links: Link[] }[];
     supportText: string;
-    supportUrl?: string;
     copyright: string;
   };
-  legal?: { privacyUrl?: string; termsUrl?: string };
   social?: Link[];
 }
 
@@ -144,6 +144,7 @@ export const site: Site = {
     label: 'Download for Windows',
     version,
     platformNote,
+    eyebrow: 'Download',
     heading: 'Put your AI team to work',
     lead: `Download ${productName} for Windows and run your first project today.`,
   },
@@ -444,6 +445,7 @@ export const site: Site = {
     menuLabel: 'Menu',
     downloadNavLabel: 'Download',
     logoLabel: `${productName} home`,
+    proofLabel: 'Proof',
   },
 
   footer: {
@@ -465,6 +467,5 @@ export const site: Site = {
     copyright: 'All rights reserved.',
   },
 
-  legal: {},
   social: [],
 };

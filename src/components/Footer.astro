@@ -4,16 +4,7 @@ import Logo from './Logo.astro';
 
 const year = new Date().getFullYear();
 
-const columns = site.footer.columns.map((col) => ({ ...col, links: [...col.links] }));
-const help = columns.find((c) => c.heading === 'Help');
-if (site.footer.supportUrl && help) {
-  help.links.push({ label: 'Support', href: site.footer.supportUrl });
-}
-const legalLinks = [
-  site.legal?.privacyUrl && { label: 'Privacy', href: site.legal.privacyUrl },
-  site.legal?.termsUrl && { label: 'Terms', href: site.legal.termsUrl },
-].filter((l): l is { label: string; href: string } => Boolean(l));
-if (legalLinks.length) columns.push({ heading: 'Legal', links: legalLinks });
+const columns = site.footer.columns.filter((col) => col.links.length > 0);
 ---
 
 <footer class="footer">

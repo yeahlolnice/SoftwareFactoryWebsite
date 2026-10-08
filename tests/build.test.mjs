@@ -98,3 +98,44 @@ test('footer headings are not h2 elements', () => {
   const footer = html.slice(html.indexOf('<footer'));
   assert.doesNotMatch(footer, /<h2[\s>]/);
 });
+
+const astroFiles = listFiles('src/', ['.astro']);
+const USER_FACING_ATTRS = ['aria-label', 'aria-description', 'alt', 'title', 'eyebrow', 'label', 'placeholder'];
+
+function splitAstro(src) {
+  const m = src.match(/^---\n([\s\S]*?)\n---/);
+  return { front: m ? m[1] : '', template: m ? src.slice(m[0].length) : src };
+}
+
+test('no string-literal user-facing attribute values in component templates', () => {
+  const bad = [];
+  const attrRe = new RegExp(`(?<![\\w:-])(${USER_FACING_ATTRS.join('|')})\\s*=\\s*(["'])([^"']*\\p{L}[^"']*)\\2`, 'gu');
+  for (const f of astroFiles) {
+    const { template } = splitAstro(readFileSync(new URL(f, root), 'utf8'));
+    const markup = template.replace(/<style[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
+    for (const m of markup.matchAll(attrRe)) bad.push(`${f}: ${m[1]}="${m[3]}"`);
+  }
+  assert.deepEqual(bad, []);
+});
+
+test('no capitalised English string literals in component frontmatter', () => {
+  const bad = [];
+  for (const f of astroFiles) {
+    const { front } = splitAstro(readFileSync(new URL(f, root), 'utf8'));
+    const code = front.split('\n').filter((l) => !/^\s*(import|export)\b.*\bfrom\b/.test(l)).join('\n');
+    for (const m of code.matchAll(/(['"`])([A-Z][a-z]+[^'"`\n]*)\1/g)) bad.push(`${f}: ${m[0]}`);
+  }
+  assert.deepEqual(bad, []);
+});
+
+test('copy checks detect violations (self-test)', () => {
+  const attrRe = new RegExp(`(?<![\\w:-])(${USER_FACING_ATTRS.join('|')})\\s*=\\s*(["'])([^"']*\\p{L}[^"']*)\\2`, 'gu');
+  assert.ok('<section aria-label="Proof">'.match(attrRe));
+  assert.ok('<A eyebrow="Download" />'.match(attrRe));
+  assert.ok(!'<A eyebrow={x.eyebrow} aria-labelledby="hero-heading" />'.match(attrRe));
+});
+
+test('no-JS fallback: nav is not hidden unless the js class is present', () => {
+  const css = readFileSync(new URL('src/components/Header.astro', root), 'utf8');
+  assert.doesNotMatch(css, /\.nav\s*\{[^}]*display:\s*none/);
+});

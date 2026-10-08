@@ -120,13 +120,28 @@ import Logo from './Logo.astro';
     top: 100%;
     left: 0;
     right: 0;
-    display: none;
+    display: block;
     background: var(--surface);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
-  .nav[data-open] {
-    display: block;
+  :global(html.js) .nav:not([data-open]) {
+    display: none;
+  }
+  @media (max-width: 1023.98px) {
+    :global(html:not(.js)) .header__inner {
+      flex-wrap: wrap;
+      padding-block: var(--space-2);
+      height: auto;
+      min-height: var(--header-h);
+    }
+    :global(html:not(.js)) .nav {
+      position: static;
+      order: 3;
+      flex-basis: 100%;
+      border: 0;
+      background: none;
+    }
   }
   .nav__list {
     display: grid;
@@ -154,7 +169,8 @@ import Logo from './Logo.astro';
   }
 
   @media (min-width: 1024px) {
-    .nav {
+    .nav,
+    :global(html.js) .nav:not([data-open]) {
       position: static;
       display: block;
       background: none;
