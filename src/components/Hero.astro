@@ -1,12 +1,14 @@
 ---
 import { site } from '../data/site';
 import Button from './Button.astro';
+import AppMock from './AppMock.astro';
 
 const { hero } = site;
 ---
 
 <section id="hero" class="hero" aria-labelledby="hero-heading">
   <div class="container">
+    <div class="hero__copy">
     <p class="hero__eyebrow">{hero.eyebrow}</p>
     <h1 id="hero-heading">{hero.headline}</h1>
     <p class="hero__lead">{hero.lead}</p>
@@ -22,13 +24,37 @@ const { hero } = site;
       <Button href={hero.secondaryCta.href} variant="ghost" size="lg">{hero.secondaryCta.label}</Button>
     </div>
     <p class="hero__micro">{hero.microcopy}</p>
+    </div>
+    <div class="hero__mock">
+      <AppMock />
+    </div>
   </div>
 </section>
 
 <style>
   .hero {
-    padding-block: var(--section-pad);
+    position: relative;
+    padding-block: var(--space-10) var(--section-pad);
     background: var(--bg);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(70% 60% at 50% 30%, var(--bg-deep), transparent);
+    -webkit-mask-image: radial-gradient(70% 60% at 50% 30%, var(--bg-deep), transparent);
+    pointer-events: none;
+  }
+  .hero > .container {
+    position: relative;
+  }
+  .hero__copy {
+    max-width: 800px;
   }
   .hero__eyebrow {
     margin-bottom: var(--space-3);
@@ -59,9 +85,32 @@ const { hero } = site;
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-xs);
   }
+  .hero__mock {
+    margin-top: var(--space-12);
+  }
   @media (min-width: 480px) {
     .hero__ctas {
       flex-direction: row;
+    }
+  }
+  @media (min-width: 640px) {
+    .hero__copy {
+      margin-inline: auto;
+      text-align: center;
+    }
+    .hero__lead {
+      margin-inline: auto;
+    }
+    .hero__ctas {
+      justify-content: center;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      padding-top: var(--space-12);
+    }
+    .hero__mock {
+      margin-top: var(--space-10);
     }
   }
 </style>
