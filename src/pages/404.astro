@@ -4,7 +4,7 @@ import Button from '../components/Button.astro';
 import { site } from '../data/site';
 ---
 
-<Base title={site.notFound.title} description={site.notFound.body}>
+<Base title={site.notFound.title} description={site.notFound.body} noindex>
   <section class="not-found" aria-labelledby="not-found-heading">
     <h1 id="not-found-heading">{site.notFound.heading}</h1>
     <p>{site.notFound.body}</p>
