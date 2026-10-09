@@ -60,7 +60,7 @@ Note: the first version of the reduced-motion test used `test.use({ reducedMotio
   - Hero shows `v0.0.0 (placeholder) · Windows 10/11, 64-bit`.
   - The download CTA href is `https://example.com/downloads/software-factory-setup.exe` (`src/data/site.ts:165`). The test verifies the href exists, not that it resolves to a real file.
 
-- **Pending: TASK-003 script-order assertion.** The PM's follow-up (Frontend Lead) is not present in `tests/` yet (grep for "script-order" finds nothing). Re-run once it lands.
+- **Resolved: TASK-003 script-order assertion.** Added as `no-preference: log lines appear in script order` in `tests/e2e/site.spec.ts` and passing in the Playwright run.
 
 ## Visual review
 
