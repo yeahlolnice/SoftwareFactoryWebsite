@@ -20,12 +20,16 @@ function loadPlaywright() {
 }
 
 const playwright = loadPlaywright();
-const skip = playwright ? false : 'playwright is not installed';
+const skip = false;
+
+test('playwright is installed (hero browser tests must never be skipped)', () => {
+  assert.ok(playwright, 'playwright is missing: run `npm install && npx playwright install chromium`');
+});
 let server;
 let browser;
 
 before(async () => {
-  if (!playwright) return;
+  assert.ok(playwright, 'playwright is missing: run `npm install && npx playwright install chromium`');
   server = spawn('npx', ['astro', 'preview', '--port', String(PORT), '--host', '127.0.0.1'], {
     stdio: 'ignore',
   });

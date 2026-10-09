@@ -256,8 +256,8 @@ export const site: Site = {
     ],
     statusBar: {
       working: '4 agents working',
-      progress: '7 / 12 tasks done',
-      progressFinal: '8 / 12 tasks done',
+      progress: '6 / 12 tasks done',
+      progressFinal: '7 / 12 tasks done',
       branch: 'main · 3 branches',
     },
     ui: {
