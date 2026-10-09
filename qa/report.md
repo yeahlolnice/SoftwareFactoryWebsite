@@ -60,7 +60,7 @@ Note: the first version of the reduced-motion test used `test.use({ reducedMotio
   - Hero shows `v0.0.0 (placeholder) · Windows 10/11, 64-bit`.
   - The download CTA href is `https://example.com/downloads/software-factory-setup.exe` (`src/data/site.ts:165`). The test verifies the href exists, not that it resolves to a real file.
 
-- **Pending: TASK-003 script-order assertion.** The PM's follow-up (Frontend Lead) is not present in `tests/` yet (grep for "script-order" finds nothing). Re-run once it lands.
+- **Resolved: TASK-003 script-order assertion.** Added as `no-preference: log lines appear in script order` in `tests/e2e/site.spec.ts` and passing in the Playwright run.
 
 ## Visual review
 
@@ -76,3 +76,15 @@ Reviewed at full resolution: hero at 1280px and 360px, the compact app mock and 
 - Chromium from `/ms-playwright`, Playwright 1.48.2, Node v20.18.0.
 - Test artifacts: `test-results/` and `playwright-report/` added to `.gitignore`.
 - `package.json`: added `@playwright/test@1.48.2` and `@axe-core/playwright@4.10.1`; `test` script now also runs `playwright test`; added `test:e2e`. The existing `playwright@1.48.2` devDependency was left in place.
+
+## TASK-008 resolution
+
+| Item | Status |
+| --- | --- |
+| BUG-001 (high) CSP blocks inline styles | **Fixed.** AppMock progress bars use `data-p` / `data-p0` attributes with CSS rules in `appmock.css`; no `style=` attributes in built HTML. The mock's script moved to `src/scripts/app-mock.js` and Astro now emits all scripts as external files (`assetsInlineLimit: 0`), so `nginx.conf` only needs the hash of the `html.js` marker. New e2e test applies the nginx CSP and asserts no violations, that bars have a `--p` value and that the stream starts. |
+| BUG-002 (medium) mock-data test anchor | **Fixed.** The test now anchors on the `log: [` block and normalises CRLF line endings. |
+| BUG-003 (low) 3+3+2 team grid at 768px | **Fixed.** Agent team grid is 2 columns from 640px and 4 from 1024px, so 8 cards fill evenly. |
+| BUG-004 (info) placeholder content | **Deferred to the product owner** (real download URL, version, product name need owner input). Documented in `README.md` and the `PLACEHOLDERS` list in `src/data/site.ts`. |
+| TASK-003 script-order assertion | **Added** (`log lines appear in script order`). |
+
+Results: `npm run build` OK; `node --test tests/` 38 pass, 0 fail; `npx playwright test` 18 passed.

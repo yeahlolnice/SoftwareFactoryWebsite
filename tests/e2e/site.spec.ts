@@ -1,6 +1,6 @@
 import { test, expect, type ConsoleMessage, type Page, type Response } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 
 const WIDTHS = [360, 768, 1280] as const;
 const MOBILE_MAX = 1023;
@@ -166,6 +166,48 @@ test.describe('reduced motion', () => {
     const log = page.locator('.am-log__lines:visible').first();
     const before = await log.innerText();
     await expect.poll(() => log.innerText(), { timeout: 5000 }).not.toBe(before);
+  });
+
+  test('no-preference: log lines appear in script order', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    const msgs = () => page.locator('.am-log__lines:visible').first().locator('.am-msg').allInnerTexts();
+    const initial = await msgs();
+    expect(initial.length).toBeGreaterThan(6);
+    await expect.poll(async () => (await msgs()).join('|'), { timeout: 6000 }).not.toBe(initial.join('|'));
+    const after = await msgs();
+    const n = initial.length;
+    const shift = initial.indexOf(after[0]);
+    expect(shift).toBeGreaterThan(0);
+    expect(after).toEqual(initial.map((_, i) => initial[(i + shift) % n]));
+  });
+});
+
+test.describe('production CSP', () => {
+  test('no CSP violations with the nginx Content-Security-Policy applied', async ({ page }) => {
+    const conf = readFileSync('nginx.conf', 'utf8');
+    const csp = conf.match(/Content-Security-Policy "([^"]+)"/)?.[1];
+    expect(csp).toBeTruthy();
+    await page.route('**/*', async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({ response, headers: { ...response.headers(), 'content-security-policy': csp as string } });
+    });
+    const violations: string[] = [];
+    page.on('console', (m) => {
+      if (/content security policy|refused to/i.test(m.text())) violations.push(m.text());
+    });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await page.waitForLoadState('load');
+    await page.waitForTimeout(1500);
+    expect(violations).toEqual([]);
+    const widths = await page.locator('.am-desktop .am-fill').evaluateAll((els) =>
+      els.map((e) => getComputedStyle(e).getPropertyValue('--p').trim()),
+    );
+    expect(widths.every((w) => w !== '')).toBe(true);
+    const streamed = await page.evaluate(() => document.querySelector('.am-log__lines')?.classList.contains('am-streaming'));
+    expect(streamed).toBe(true);
   });
 });
 
