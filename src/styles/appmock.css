@@ -347,6 +347,28 @@
   transform: scaleX(var(--p));
   transform-origin: left;
 }
+.am-fill[data-p="0"] { --p: 0; }
+.am-fill[data-p0="0"] { --p0: 0; }
+.am-fill[data-p="10"] { --p: 0.1; }
+.am-fill[data-p0="10"] { --p0: 0.1; }
+.am-fill[data-p="20"] { --p: 0.2; }
+.am-fill[data-p0="20"] { --p0: 0.2; }
+.am-fill[data-p="30"] { --p: 0.3; }
+.am-fill[data-p0="30"] { --p0: 0.3; }
+.am-fill[data-p="40"] { --p: 0.4; }
+.am-fill[data-p0="40"] { --p0: 0.4; }
+.am-fill[data-p="50"] { --p: 0.5; }
+.am-fill[data-p0="50"] { --p0: 0.5; }
+.am-fill[data-p="60"] { --p: 0.6; }
+.am-fill[data-p0="60"] { --p0: 0.6; }
+.am-fill[data-p="70"] { --p: 0.7; }
+.am-fill[data-p0="70"] { --p0: 0.7; }
+.am-fill[data-p="80"] { --p: 0.8; }
+.am-fill[data-p0="80"] { --p0: 0.8; }
+.am-fill[data-p="90"] { --p: 0.9; }
+.am-fill[data-p0="90"] { --p0: 0.9; }
+.am-fill[data-p="100"] { --p: 1; }
+.am-fill[data-p0="100"] { --p0: 1; }
 .am-add {
   margin: 12px;
   height: 40px;

@@ -6,5 +6,6 @@ export default defineConfig({
   output: 'static',
   compressHTML: true,
   build: { inlineStylesheets: 'never' },
+  vite: { build: { assetsInlineLimit: 0 } },
   devToolbar: { enabled: false },
 });
