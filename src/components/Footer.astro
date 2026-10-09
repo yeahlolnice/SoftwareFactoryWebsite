@@ -29,7 +29,10 @@ const columns = site.footer.columns.filter((col) => col.links.length > 0);
         ))
       }
     </div>
-    <p class="footer__copy">© {year} {site.companyName}. {site.footer.copyright}</p>
+    <div class="footer__bottom">
+      <p class="footer-support">{site.footer.supportText}</p>
+      <p class="footer__copy">© {year} {site.companyName}. {site.footer.copyright}</p>
+    </div>
   </div>
 </footer>
 
@@ -74,12 +77,23 @@ const columns = site.footer.columns.filter((col) => col.links.length > 0);
   .footer__col a:hover {
     color: var(--accent-hover);
   }
-  .footer__copy {
+  .footer__bottom {
+    display: grid;
+    gap: var(--space-2);
     margin-top: var(--space-12);
     padding-top: var(--space-6);
     border-top: 1px solid var(--border);
+  }
+  .footer-support {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+    overflow-wrap: anywhere;
+  }
+  .footer__copy {
     color: var(--text-subtle);
     font-size: var(--text-sm);
+    overflow-wrap: anywhere;
   }
 
   @media (min-width: 768px) {
