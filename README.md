@@ -34,7 +34,7 @@ docker run --rm -p 8080:80 software-factory-website   # http://localhost:8080
 docker compose up --build
 ```
 
-The image builds the site with Node and serves `dist/` with `nginx.conf`, which sets the security headers, including a strict CSP (`style-src 'self'`, no inline styles). The only inline script is the tiny `html.js` marker in `src/layouts/Base.astro`, allowed by hash. If you edit it, regenerate its `sha256` in `nginx.conf`; `tests/security-headers.test.mjs` fails when the hash drifts. Other scripts are bundled as external files.
+The image builds the site with Node and serves `dist/` with `nginx.conf`, which sets the security headers, including a strict CSP (`style-src 'self'`, no inline styles). The only executable inline script is the tiny `html.js` marker in `src/layouts/Base.astro`, allowed by hash. If you edit it, regenerate its `sha256` in `nginx.conf`; `tests/security-headers.test.mjs` fails when the hash drifts. The page also contains two inline `application/ld+json` blocks (SEO structured data); these are data, not executed, so CSP `script-src` does not apply to them. All other scripts are bundled as external files.
 
 ## Owner-supplied items (not yet provided)
 
