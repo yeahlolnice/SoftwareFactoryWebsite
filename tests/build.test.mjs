@@ -164,3 +164,14 @@ test('no-JS fallback: nav is not hidden unless the js class is present', () => {
   const css = readFileSync(new URL('src/components/Header.astro', root), 'utf8');
   assert.doesNotMatch(css, /\.nav\s*\{[^}]*display:\s*none/);
 });
+
+test('footer.supportText is rendered in the footer and the FAQ support answer', () => {
+  const html = readFileSync(htmlPath, 'utf8');
+  const src = readFileSync(new URL('src/data/site.ts', root), 'utf8');
+  const text = src.match(/const supportText = '([^']+)'/)?.[1];
+  assert.ok(text, 'supportText constant not found in src/data/site.ts');
+  const footer = html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+  assert.match(footer, new RegExp(`<p class="footer-support[^"]*"[^>]*>${text}</p>`));
+  const beforeFooter = html.slice(0, html.indexOf('<footer'));
+  assert.ok(beforeFooter.includes(text), 'FAQ support answer no longer contains supportText');
+});
