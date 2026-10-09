@@ -1,0 +1,319 @@
+---
+import '../styles/appmock.css';
+import { site } from '../data/site';
+import type { MockCard, MockColumn } from '../data/site';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+const { mock, productName } = site;
+const { agents, columns, log, ui, statusBar } = mock;
+
+const DESIGN_WIDTH = 1040;
+
+const movingCard = columns.flatMap((c) => c.cards).find((c) => c.animates);
+const sourceColumn = columns.find((c) => c.cards.some((card) => card.animates));
+const targetColumn = columns.find((c) => c.id === 'done');
+
+// Final (static) counts: the moving card leaves its source column and joins the target.
+function counts(col: MockColumn) {
+  const from = col.total;
+  const to = col === sourceColumn ? col.total - 1 : col === targetColumn ? col.total + 1 : col.total;
+  return { from, to };
+}
+
+// Cards that stay put; the moving card is rendered in the target column (its final position).
+function staticCards(col: MockColumn): MockCard[] {
+  return col.cards.filter((c) => !c.animates);
+}
+
+const progressSlots = ['a', 'b'];
+let slotIndex = 0;
+const agentRows = agents.map((a) => ({
+  ...a,
+  slot: a.progressFrom !== undefined ? progressSlots[slotIndex++] : undefined,
+}));
+
+const compactIds = ['in-progress', 'review', 'done'];
+const compactColumns = compactIds
+  .map((id) => columns.find((c) => c.id === id))
+  .filter((c): c is MockColumn => Boolean(c));
+const compactLogStart = Math.max(0, log.length - 6);
+---
+
+<figure class="am" aria-labelledby="mock-caption">
+  <div class="am-glow" aria-hidden="true"></div>
+
+  <div class="am-desktop" data-design-width={DESIGN_WIDTH} aria-hidden="true" role="presentation">
+    <div class="am-win">
+      <div class="am-titlebar">
+        <span class="am-titlebar__title">
+          <Logo wordmark={false} size={16} />
+          <span>{productName} — {mock.windowTitle}</span>
+        </span>
+        <span class="am-caption-btns">
+          <svg viewBox="0 0 46 36" width="46" height="36" focusable="false"><path d="M18 18h10" /></svg>
+          <svg viewBox="0 0 46 36" width="46" height="36" focusable="false"><path d="M18.5 13.5h9v9h-9z" /></svg>
+          <svg viewBox="0 0 46 36" width="46" height="36" focusable="false"><path d="M18.5 13.5l9 9M27.5 13.5l-9 9" /></svg>
+        </span>
+      </div>
+
+      <div class="am-body">
+        <section class="am-panel am-agents">
+          <header class="am-panel__head">
+            <span>{ui.agentsPanel}</span>
+            <span class="am-badge">{ui.agentsBadge}</span>
+          </header>
+          <ul class="am-agent-list">
+            {
+              agentRows.map((a) => (
+                <li class="am-agent" data-c={a.color} data-selected={a.selected ? '' : undefined}>
+                  <span class="am-avatar">
+                    <Icon name={a.icon} size={16} />
+                  </span>
+                  <span class="am-agent__main">
+                    <span class="am-agent__top">
+                      <span class="am-agent__id">
+                        <span class="am-agent__name">{a.name}</span>
+                        <span class="am-agent__role">{a.role}</span>
+                      </span>
+                      <span class="am-status" data-tone={a.statusTone}>
+                        <span class="am-led" data-pulse={a.statusTone === 'idle' ? undefined : ''} />
+                        <span>{a.status}</span>
+                      </span>
+                    </span>
+                    <span class="am-track">
+                      <span
+                        class="am-fill"
+                        data-slot={a.slot}
+                        style={`--p:${a.progress / 100};--p0:${(a.progressFrom ?? a.progress) / 100}`}
+                      />
+                    </span>
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="am-add">{ui.addAgent}</div>
+        </section>
+
+        <section class="am-panel am-board">
+          <header class="am-panel__head">
+            <span>{ui.boardPanel}</span>
+            <span class="am-chips">
+              {ui.filters.map((f, i) => <span class="am-chip" data-on={i === 0 ? '' : undefined}>{f}</span>)}
+            </span>
+          </header>
+          <div class="am-cols">
+            {
+              columns.map((col) => {
+                const n = counts(col);
+                const isTarget = col === targetColumn;
+                return (
+                  <div class="am-col" data-tone={col.tone}>
+                    <div class="am-col__head">
+                      <span>{col.label}</span>
+                      <span class="am-count" data-moves={n.from !== n.to ? '' : undefined}>
+                        <span class="am-count__from">{n.from}</span>
+                        {n.from !== n.to && <span class="am-count__to">{n.to}</span>}
+                      </span>
+                    </div>
+                    <div class="am-col__cards">
+                      {isTarget && movingCard && (
+                        <div class="am-card" data-c={movingCard.color} data-moving="" data-foot={movingCard.owner ? '' : undefined}>
+                          <span class="am-card__id">{movingCard.id}</span>
+                          <span class="am-card__title">{movingCard.title}</span>
+                          <span class="am-card__foot">
+                            <span class="am-dot" data-c={movingCard.color} />
+                            {movingCard.priority && <span class="am-prio" data-p={movingCard.priority}>{movingCard.priority}</span>}
+                          </span>
+                        </div>
+                      )}
+                      {staticCards(col).map((card) => (
+                        <div
+                          class="am-card"
+                          data-c={card.color}
+                          data-active={card.active ? '' : undefined}
+                          data-shift={isTarget ? '' : undefined}
+                          data-foot={card.owner ? '' : undefined}
+                        >
+                          <span class="am-card__id">{card.id}</span>
+                          <span class="am-card__title">{card.title}</span>
+                          {card.owner && (
+                            <span class="am-card__foot">
+                              <span class="am-dot" data-c={card.color} />
+                              {card.priority && <span class="am-prio" data-p={card.priority}>{card.priority}</span>}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </section>
+
+        <section class="am-panel am-log">
+          <header class="am-panel__head">
+            <span>{ui.logPanel}</span>
+            <span class="am-stream"><span class="am-led" data-pulse="" />{ui.logStatus}</span>
+          </header>
+          <ol class="am-log__lines">
+            {
+              log.map((l, i) => (
+                <li class="am-ln" data-tone={l.tone}>
+                  <span class="am-t">{l.time}</span>
+                  <span class="am-tag" data-c={l.color}>[{l.agent}]</span>
+                  <span class="am-msg">{l.message}</span>
+                  {i === log.length - 1 && <span class="am-caret" />}
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+      </div>
+
+      <div class="am-statusbar">
+        <span class="am-stream"><span class="am-led" data-pulse="" />{statusBar.working}</span>
+        <span class="am-count" data-moves="">
+          <span class="am-count__from">{statusBar.progress}</span>
+          <span class="am-count__to">{statusBar.progressFinal}</span>
+        </span>
+        <span>{statusBar.branch}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="am-compact" aria-hidden="true" role="presentation">
+    <div class="am-titlebar">
+      <span class="am-titlebar__title">
+        <Logo wordmark={false} size={16} />
+        <span>{productName} — {mock.windowTitle}</span>
+      </span>
+    </div>
+
+    <div class="am-strip">
+      <span class="am-faces">
+        {
+          agents.map((a) => (
+            <span class="am-avatar" data-c={a.color}>
+              <Icon name={a.icon} size={20} />
+              <span class="am-led" data-tone={a.statusTone} data-pulse={a.statusTone === 'idle' ? undefined : ''} />
+            </span>
+          ))
+        }
+      </span>
+      <span class="am-strip__label">{ui.agentsOnline}</span>
+    </div>
+
+    <div class="am-mini">
+      {
+        compactColumns.map((col) => {
+          const n = counts(col);
+          const isTarget = col === targetColumn;
+          const first = staticCards(col)[0];
+          return (
+            <div class="am-col" data-tone={col.tone}>
+              <div class="am-col__head">
+                <span>{col.label}</span>
+                <span class="am-count" data-moves={n.from !== n.to ? '' : undefined}>
+                  <span class="am-count__from">{n.from}</span>
+                  {n.from !== n.to && <span class="am-count__to">{n.to}</span>}
+                </span>
+              </div>
+              <div class="am-col__cards">
+                {isTarget && movingCard && (
+                  <div class="am-card" data-c={movingCard.color} data-moving="">
+                    <span class="am-card__id">{movingCard.id}</span>
+                    <span class="am-card__title">{movingCard.title}</span>
+                  </div>
+                )}
+                {!isTarget && first && col.id !== 'review' && (
+                  <div class="am-card" data-c={first.color} data-active={first.active ? '' : undefined}>
+                    <span class="am-card__id">{first.id}</span>
+                    <span class="am-card__title">{first.title}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <ol class="am-log__lines am-log__lines--compact">
+      {
+        log.map((l, i) => (
+          <li class={i < compactLogStart ? 'am-ln am-ln--extra' : 'am-ln'} data-tone={l.tone}>
+            <span class="am-t">{l.time}</span>
+            <span class="am-tag" data-c={l.color}>[{l.agent}]</span>
+            <span class="am-msg">{l.message}</span>
+            {i === log.length - 1 && <span class="am-caret" />}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <figcaption id="mock-caption" class="sr-only">{mock.caption}</figcaption>
+
+  <script is:inline>
+    (function () {
+      var fig = document.currentScript.parentElement;
+      var box = fig.querySelector('.am-desktop');
+      if (box) {
+        var width = Number(box.getAttribute('data-design-width'));
+        var setScale = function () {
+          box.style.setProperty('--mock-scale', String(box.clientWidth / width));
+        };
+        setScale();
+        if ('ResizeObserver' in window) new ResizeObserver(setScale).observe(box);
+      }
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      var toSec = function (t) { var p = t.split(':'); return p[0] * 3600 + p[1] * 60 + Number(p[2]); };
+      var toTime = function (n) { n = n % 86400; return pad(Math.floor(n / 3600)) + ':' + pad(Math.floor(n / 60) % 60) + ':' + pad(n % 60); };
+      var stream = function (ol) {
+        var rows = Array.prototype.slice.call(ol.children);
+        var deltas = rows.map(function (li, i) {
+          var d = i ? toSec(li.firstElementChild.textContent) - toSec(rows[i - 1].firstElementChild.textContent) : 4;
+          return d > 0 ? d : 4;
+        });
+        var clock = toSec(rows[rows.length - 1].firstElementChild.textContent);
+        var caret = ol.querySelector('.am-caret');
+        var step = 0;
+        if (ol.classList.contains('am-log__lines--compact') && ol.offsetHeight) {
+          ol.style.height = ol.offsetHeight + 'px';
+        }
+        ol.classList.add('am-streaming');
+        var next = function () {
+          if (reduce.matches) return;
+          if (fig.hasAttribute('data-paused') || document.hidden || !ol.offsetParent) return;
+          var first = ol.firstElementChild;
+          var gap = parseFloat(getComputedStyle(ol).rowGap) || 0;
+          var h = first.offsetHeight + gap;
+          clock += deltas[step % deltas.length];
+          first.firstElementChild.textContent = toTime(clock);
+          step++;
+          ol.appendChild(first);
+          if (caret) first.appendChild(caret);
+          var opts = { duration: 380, easing: 'ease-out' };
+          Array.prototype.forEach.call(ol.children, function (li) {
+            li.animate([{ transform: 'translateY(' + h + 'px)' }, { transform: 'none' }], opts);
+          });
+          first.animate([{ opacity: 0 }, { opacity: 1 }], opts);
+        };
+        window.setInterval(next, 1500);
+      };
+      if (!reduce.matches) {
+        Array.prototype.forEach.call(fig.querySelectorAll('.am-log__lines'), stream);
+      }
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          fig.toggleAttribute('data-paused', !entries[0].isIntersecting);
+        }).observe(fig);
+      }
+    })();
+  </script>
+</figure>

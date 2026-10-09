@@ -240,7 +240,7 @@ The mock is authored at 1040×620 px and scaled **as a unit** with `transform: s
   - Left: 16px logo glyph (accent), title text mono 12px `--text-muted`: `{productName} — acme-storefront` (project name is fictional).
   - Right: three Windows-style caption buttons, each 46×36 px with a 10px line icon: minimise (—), maximise (□), close (×), stroke `--text-muted`; no hover state.
 - **Body** below title bar: 1040×584, CSS grid `grid-template-columns: 224px 1fr 300px; ` with 1px `--border` separators; each panel has a 36px header (mono 11px uppercase `--text-subtle` label on `--surface`, bottom border).
-- **Status bar** (height 24px inside the 584: i.e. panels are 560px tall): `--bg-deep`, mono 11px `--text-subtle`; left: `● 4 agents working` (LED accent, pulsing); middle: `7 / 12 tasks done`; right: `main · 3 branches`.
+- **Status bar** (height 24px inside the 584: i.e. panels are 560px tall): `--bg-deep`, mono 11px `--text-subtle`; left: `● 4 agents working` (LED accent, pulsing); middle: `6 / 12 tasks done`; right: `main · 3 branches`.
 
 ### 6.2 Left panel — "Agent team" (224px)
 Header label: `AGENT TEAM`, right side badge `5 online` (mono 11px, `--accent` on `--accent-tint`, radius 999px, padding 2px 8px).
@@ -301,13 +301,12 @@ Single master loop of **14s**; all child animations share `animation-duration: 1
 | Time | Event |
 |---|---|
 | 0–1s | Window fades/rises in once on load (`opacity 0→1; translateY(16px→0)`, 600ms; only once, not part of the loop) |
-| 0–11s | Log lines 1–11 appear one by one (each: `opacity 0→1`, `translateY(6px→0)`, 200ms), spaced ≈1s; line 8 is the red failure |
+| continuous | Activity log streams independently of the 14s board loop (tiny inline script in AppMock.astro): every 1.5s the oldest line is recycled to the bottom with a continuing timestamp, the stack slides up 380ms and the new line fades in. Older lines are pushed out at the top (fade mask); the log never clears. Not started under reduced motion. |
 | 3–5s | Iris's progress bar 20%→90%; TASK-013 shimmer border (accent at 40% alpha sweeping, 1.6s) |
 | 6–8s | Quinn's progress bar 0%→100%; status word cross-fades `testing`; |
 | 8–9s | TASK-012 card flashes `--danger` left border for 400ms then returns to its owner colour, matching line 8 |
-| 10–11s | TASK-012 card slides from Review to Done (translate to Done column top, 600ms ease-in-out); counts update by cross-fading numbers (`Review (1)`→`(0)`, `Done (6)`→`(7)`); status bar `7 / 12 tasks done` fades to `8 / 12` |
-| 11–13s | Last log line appears with caret blinking |
-| 13–14s | Everything holds then log lines fade out (200ms) and the loop restarts from state 0 |
+| 10–11s | TASK-012 card slides from Review to Done (translate to Done column top, 600ms ease-in-out); counts update by cross-fading numbers (`Review (1)`→`(0)`, `Done (6)`→`(7)`); status bar `6 / 12 tasks done` fades to `7 / 12` |
+| 13–14s | Everything holds, then the board loop restarts from state 0 (the log keeps streaming) |
 
 Continuous ambient: LEDs on active agents pulse (`opacity 1↔0.45`, 1.6s, `ease-in-out`, infinite); caret blinks (`steps(2)`, 1s).
 

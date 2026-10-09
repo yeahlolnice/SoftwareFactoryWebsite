@@ -39,6 +39,8 @@ export interface MockAgent {
   status: string;
   statusTone: 'ok' | 'info' | 'warn' | 'idle';
   progress: number;
+  progressFrom?: number;
+  icon: IconName;
   selected?: boolean;
 }
 export interface MockCard {
@@ -48,6 +50,7 @@ export interface MockCard {
   priority?: 'high' | 'med' | 'low';
   color: RoleColor | 'none';
   animates?: boolean;
+  active?: boolean;
 }
 export interface MockColumn {
   id: 'backlog' | 'in-progress' | 'review' | 'done';
@@ -103,7 +106,17 @@ export interface Site {
     agents: MockAgent[];
     columns: MockColumn[];
     log: MockLogLine[];
-    statusBar: { working: string; progress: string; branch: string };
+    statusBar: { working: string; progress: string; progressFinal: string; branch: string };
+    ui: {
+      agentsPanel: string;
+      agentsBadge: string;
+      addAgent: string;
+      boardPanel: string;
+      filters: string[];
+      logPanel: string;
+      logStatus: string;
+      agentsOnline: string;
+    };
     caption: string;
   };
   proof: { text: string; href?: string }[];
@@ -202,11 +215,11 @@ export const site: Site = {
   mock: {
     windowTitle: 'acme-storefront',
     agents: [
-      { name: 'Maya', role: 'Project Manager', color: 'accent', status: 'planning', statusTone: 'ok', progress: 70 },
-      { name: 'Theo', role: 'Architect', color: 'violet', status: 'idle', statusTone: 'idle', progress: 100 },
-      { name: 'Iris', role: 'Frontend Developer', color: 'info', status: 'coding', statusTone: 'info', progress: 90, selected: true },
-      { name: 'Jonas', role: 'DevOps Engineer', color: 'warn', status: 'building', statusTone: 'warn', progress: 40 },
-      { name: 'Quinn', role: 'QA Engineer', color: 'accent', status: 'testing', statusTone: 'ok', progress: 100 },
+      { name: 'Maya', role: 'Project Manager', color: 'accent', status: 'planning', statusTone: 'ok', progress: 70, icon: 'plan' },
+      { name: 'Theo', role: 'Architect', color: 'violet', status: 'idle', statusTone: 'idle', progress: 100, icon: 'branch' },
+      { name: 'Iris', role: 'Frontend Developer', color: 'info', status: 'coding', statusTone: 'info', progress: 90, progressFrom: 20, icon: 'code', selected: true },
+      { name: 'Jonas', role: 'DevOps Engineer', color: 'warn', status: 'building', statusTone: 'warn', progress: 40, icon: 'server' },
+      { name: 'Quinn', role: 'QA Engineer', color: 'accent', status: 'testing', statusTone: 'ok', progress: 100, progressFrom: 0, icon: 'bug' },
     ],
     columns: [
       {
@@ -226,7 +239,7 @@ export const site: Site = {
         total: 2,
         tone: 'info',
         cards: [
-          { id: 'TASK-013', title: 'Checkout page UI', owner: 'Iris', priority: 'high', color: 'info' },
+          { id: 'TASK-013', title: 'Checkout page UI', owner: 'Iris', priority: 'high', color: 'info', active: true },
           { id: 'TASK-014', title: 'CI pipeline', owner: 'Jonas', priority: 'med', color: 'warn' },
         ],
       },
@@ -254,6 +267,10 @@ export const site: Site = {
       },
     ],
     log: [
+      { time: '12:03:41', agent: 'Maya', color: 'accent', message: 'Reading brief: acme-storefront' },
+      { time: '12:03:46', agent: 'Theo', color: 'accent', message: 'Architecture drafted: Astro + Stripe checkout' },
+      { time: '12:03:51', agent: 'Theo', color: 'accent', message: 'Decision recorded: static site, hosted checkout' },
+      { time: '12:03:58', agent: 'Maya', color: 'accent', message: 'Plan ready for your review' },
       { time: '12:04:02', agent: 'Maya', color: 'accent', message: 'Plan approved. 12 tasks created.' },
       { time: '12:04:05', agent: 'Maya', color: 'accent', message: 'Assigned TASK-013 → Iris, TASK-014 → Jonas' },
       { time: '12:04:09', agent: 'Iris', color: 'info', message: 'Creating src/pages/checkout.astro' },
@@ -267,7 +284,22 @@ export const site: Site = {
       { time: '12:04:42', agent: 'Maya', color: 'accent', message: 'TASK-012 → Done. Next: TASK-016' },
       { time: '12:04:44', agent: 'Maya', color: 'accent', message: 'Waiting for your approval on release plan' },
     ],
-    statusBar: { working: '4 agents working', progress: '7 / 12 tasks done', branch: 'main · 3 branches' },
+    statusBar: {
+      working: '4 agents working',
+      progress: '6 / 12 tasks done',
+      progressFinal: '7 / 12 tasks done',
+      branch: 'main · 3 branches',
+    },
+    ui: {
+      agentsPanel: 'Agent team',
+      agentsBadge: '5 online',
+      addAgent: '+ Add agent',
+      boardPanel: 'Task board',
+      filters: ['All', 'Mine', 'Blocked'],
+      logPanel: 'Live log',
+      logStatus: 'streaming',
+      agentsOnline: '5 agents online',
+    },
     caption: `Illustration of the ${productName} app: an agent team panel on the left, a task board in the middle and a live activity log on the right, showing agents handing tasks from planning through to testing.`,
   },
 
