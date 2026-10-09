@@ -117,6 +117,41 @@ test('the mock animates by default', { skip }, async () => {
   await context.close();
 });
 
+for (const [name, viewport, sel] of [
+  ['desktop', { width: 1280, height: 800 }, '.am-desktop .am-log__lines'],
+  ['mobile', { width: 390, height: 844 }, '.am-compact .am-log__lines'],
+]) {
+  test(`activity log streams (${name}): new lines append, nothing clears`, { skip }, async () => {
+    const { context, page } = await open(viewport, 'no-preference');
+    const read = () =>
+      page.evaluate((s) => {
+        const ol = document.querySelector(s);
+        const lines = [...ol.children];
+        return {
+          count: lines.length,
+          last: lines[lines.length - 1].textContent,
+          first: lines[0].textContent,
+          opacities: lines.map((l) => Number(getComputedStyle(l).opacity)),
+        };
+      }, sel);
+    const seen = new Set();
+    const samples = [];
+    for (let i = 0; i < 12; i++) {
+      const r = await read();
+      samples.push(r);
+      seen.add(r.last);
+      await page.waitForTimeout(700);
+    }
+    assert.ok(seen.size >= 4, `expected the newest line to keep changing, saw ${seen.size} distinct`);
+    assert.ok(samples.every((r) => r.count === samples[0].count), 'line count must stay constant (no clear/reset)');
+    assert.ok(
+      samples.every((r) => r.opacities.filter((o) => o < 1).length <= 1),
+      'at most the entering line may be fading in at any sample (no per-loop clear)',
+    );
+    await context.close();
+  });
+}
+
 for (const [name, viewport] of [
   ['desktop', { width: 1280, height: 800 }],
   ['mobile', { width: 390, height: 844 }],

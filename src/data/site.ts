@@ -241,6 +241,10 @@ export const site: Site = {
       },
     ],
     log: [
+      { time: '12:03:41', agent: 'Maya', color: 'accent', message: 'Reading brief: acme-storefront' },
+      { time: '12:03:46', agent: 'Theo', color: 'accent', message: 'Architecture drafted: Astro + Stripe checkout' },
+      { time: '12:03:51', agent: 'Theo', color: 'accent', message: 'Decision recorded: static site, hosted checkout' },
+      { time: '12:03:58', agent: 'Maya', color: 'accent', message: 'Plan ready for your review' },
       { time: '12:04:02', agent: 'Maya', color: 'accent', message: 'Plan approved. 12 tasks created.' },
       { time: '12:04:05', agent: 'Maya', color: 'accent', message: 'Assigned TASK-013 → Iris, TASK-014 → Jonas' },
       { time: '12:04:09', agent: 'Iris', color: 'info', message: 'Creating src/pages/checkout.astro' },
