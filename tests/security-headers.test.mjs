@@ -22,6 +22,7 @@ test('CSP allows the hash of every inline script in the built pages', () => {
   for (const page of pages) {
     const html = readFileSync(new URL(page, root), 'utf8');
     for (const m of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)) {
+      if (/^<script[^>]*\btype="application\/ld\+json"/.test(m[0])) continue;
       const hash = createHash('sha256').update(m[1], 'utf8').digest('base64');
       if (!allowed.has(hash)) missing.push(`${page}: sha256-${hash}`);
     }

@@ -91,6 +91,7 @@ export interface Site {
     title: string;
     description: string;
     ogImage: string;
+    ogImageAlt: string;
     keywords?: string[];
   };
   hero: {
@@ -199,7 +200,8 @@ export const site: Site = {
     title: `${productName} — Run a whole team of AI agents`,
     description:
       'A Windows desktop app that manages a team of AI agents with real roles. Hand them a goal and watch them plan, build, test and deliver a whole project.',
-    ogImage: '/og-image.svg',
+    ogImage: '/og.png',
+    ogImageAlt: 'Software Factory logo above the line "Run a whole team of AI agents."',
     keywords: ['AI agents', 'agent orchestration', 'Windows desktop app', 'AI software team'],
   },
 

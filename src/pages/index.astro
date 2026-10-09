@@ -7,9 +7,12 @@ import Features from '../components/Features.astro';
 import AgentRoles from '../components/AgentRoles.astro';
 import Faq from '../components/Faq.astro';
 import DownloadCta from '../components/DownloadCta.astro';
+import { faqPageLd, jsonLd, softwareApplicationLd } from '../data/structured-data';
 ---
 
 <Base>
+  <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(softwareApplicationLd)} />
+  <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(faqPageLd)} />
   <Hero />
   <Proof />
   <HowItWorks />
