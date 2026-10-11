@@ -1,13 +1,10 @@
 ---
+import Screenshot from './Screenshot.astro';
 import { site } from '../data/site';
 ---
 
-{
-  site.proof.length > 0 && (
-    <section id="proof" class="section" aria-label={site.layout.proofLabel}>
-      <div class="container">
-        {/* TODO(TASK-003/004): proof strip content */}
-      </div>
-    </section>
-  )
-}
+<section id="proof" class="section" aria-label={site.layout.proofLabel}>
+  <div class="container">
+    <Screenshot image={site.imagery.billing} wide />
+  </div>
+</section>

@@ -6,11 +6,12 @@ interface Props {
   image: Img;
   eager?: boolean;
   wide?: boolean;
+  narrow?: boolean;
 }
-const { image, eager = false, wide = false } = Astro.props;
+const { image, eager = false, wide = false, narrow = false } = Astro.props;
 ---
 
-<figure class:list={['shot', { 'shot--wide': wide }]}>
+<figure class:list={['shot', { 'shot--wide': wide, 'shot--narrow': narrow }]}>
   <div class="shot__win">
     <div class="shot__bar" aria-hidden="true">
       <span class="shot__title">{site.imagery.windowTitle}</span>
@@ -33,6 +34,9 @@ const { image, eager = false, wide = false } = Astro.props;
     margin-inline: auto;
     width: 100%;
     max-width: 760px;
+  }
+  .shot--narrow {
+    max-width: 628px;
   }
   .shot--wide {
     max-width: 960px;

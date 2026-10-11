@@ -11,7 +11,8 @@
 //   - faq.items.support, footer.supportText: no contact details yet
 //   - howItWorks.steps (marked TODO(PO)): confirm the four step titles and copy
 //   - features.items (marked TODO(PO)): confirm the six feature claims
-//   - screenshots: none supplied; the hero uses the CSS app mock (docs/design.md section 6)
+//   - screenshots: redacted captures live in public/images/screenshots (see docs/imagery-brief.md); all alt text and captions are in `imagery`.
+//     The billing capture keeps real spend figures. TODO(PO): confirm they may be public.
 
 export type Img = { src: string; width: number; height: number; alt: string; caption?: string };
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
@@ -323,7 +324,7 @@ export const site: Site = {
     agentChat: { src: '/images/screenshots/agent-chat.webp', width: 628, height: 237, alt: 'A direct message thread with the Project Manager agent, who replies to a specialist agent and keeps the work moving.', caption: 'Chat with any agent directly, and stay in charge of every decision.' },
     billing: { src: '/images/screenshots/billing-costs.webp', width: 1203, height: 780, alt: 'The Billing and Cost Control screen showing spend by project and a usage table of requests, tokens and costs.', caption: 'Spend by project, agent, model or task, with a budget you control.' },
     tasksBoard: { src: '/images/screenshots/tasks-board.webp', width: 1203, height: 700, alt: 'The Tasks board: task cards moving through Backlog, Ready, In Progress and Review, each assigned to an agent with a per-task budget.', caption: 'A task board your agents work through, one branch per task.' },
-    roles: { src: '/images/screenshots/roles.webp', width: 1200, height: 795, alt: 'The Roles screen: a library of built-in agent roles such as Project Manager, Architect, Developer, QA and SEO, each with a model tier.', caption: '17 built-in roles, plus custom roles you define.' },
+    roles: { src: '/images/screenshots/roles.webp', width: 1200, height: 795, alt: 'The Roles screen: a library of built-in agent roles such as Project Manager, Software Architect, Full Stack Developer, QA and SEO, each with a model tier.', caption: '17 built-in roles, plus custom roles you define.' },
     flow: { src: '/images/orchestration-flow.svg', width: 720, height: 200, alt: 'Four steps: describe the objective, review the plan, agents build on separate branches, then review and ship.' },
     teamDiagram: { src: '/images/agent-team.svg', width: 640, height: 360, alt: 'A Project Manager agent coordinating Architect, Designer, Frontend, Backend, DevOps, QA and SEO agents.' },
   },
