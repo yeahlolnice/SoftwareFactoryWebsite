@@ -88,3 +88,84 @@ Reviewed at full resolution: hero at 1280px and 360px, the compact app mock and 
 | TASK-003 script-order assertion | **Added** (`log lines appear in script order`). |
 
 Results: `npm run build` OK; `node --test tests/` 38 pass, 0 fail; `npx playwright test` 18 passed.
+
+# TASK-013: imagery visual and functional check
+
+Scope: the five WebP screenshots in `public/images/screenshots/`, the SVG diagrams and feature graphics, and the page layout at 360, 768 and 1280px. Browser: Chromium, Playwright 1.48.2, against `astro preview` of the production build.
+
+## What was run
+
+| Command | Result |
+| --- | --- |
+| `npm test` (`build && node --test tests/ && playwright test`) | **Exit 0**. Build OK; `node --test` 42 pass, 0 fail; Playwright 20 passed |
+| Element-level load check at 360 (DPR 2), 768 (DPR 1 and 2) and 1280 (DPR 1 and 2) | All 7 `<img>` elements `complete` with non-zero `naturalWidth`; no failed requests; no console errors or warnings |
+| Horizontal overflow check (`document.documentElement.scrollWidth` vs viewport) | 360, 768 and 1280, at DPR 1 and 2: scrollWidth equals viewport width. No horizontal scroll |
+| Visual review of the five shipped WebP files at source resolution | See Redaction below |
+| Visual review of 360px rendered figures (billing, tasks board) | See Legibility below |
+
+Methodology note: an early pass reported `roles.webp` and `agent-team.svg` as not loaded at 360 and 768. That was a measurement artifact. `global.css` sets `scroll-behavior: smooth`, so a scripted `scrollTo` never reached the lazy images. Re-measured with `scrollIntoView` per element, all images load. No defect filed.
+
+Side effect: `npm test` regenerates `qa/screenshots/home-{360,768,1280}.png`. Those regenerated baselines were not committed; they were restored from git. Whether to accept them is still open (see below).
+
+## Image loading and eager/lazy
+
+- `overview.webp` is `loading="eager"` (Hero). The other six images are `lazy`. Matches `tests/images.test.mjs`.
+- All images load. No broken or 404 responses.
+
+## Sizing and blur
+
+| Image | Natural px | Displayed CSS px at 1280 | Upscale at DPR 2 (1280) | Displayed CSS px at 360 | Scale at 360 |
+| --- | --- | --- | --- | --- | --- |
+| overview.webp | 964 | 958 | 1.99x | 318 | 0.33x |
+| billing-costs.webp | 1203 | 958 | 1.59x | 318 | 0.26x |
+| agent-chat.webp | 628 | 626 | 1.99x | 318 | 0.51x (1.01x at DPR 1, 768 width) |
+| tasks-board.webp | 1203 | 958 | 1.59x | 318 | 0.26x |
+| roles.webp | 1200 | 958 | 1.60x | 318 | 0.27x |
+
+- At DPR 1 nothing is upscaled above about 1x. At DPR 2 the WebP screenshots are upscaled about 1.6–2.0x, so their text is soft on high-DPI screens. **Filed as TASK-015 (medium).**
+- The SVG diagrams are vectors, so the upscale ratio does not apply.
+
+## Redaction (shipped WebP files, checked at source resolution)
+
+- `overview.webp`: no usernames or real paths. Shows `D:\Projects\acme-storefront` and "Acme Storefront", which are demo names. OK.
+- `agent-chat.webp`: no usernames or paths. The message text is an internal engineering exchange ("worktree path is a host problem", "TASK-006"). No personal data. OK. The alt text says the PM "keeps the work moving". It does not show a human escalation, which the imagery brief originally described. Acceptable, but the brief and alt text should agree.
+- `billing-costs.webp`: demo project names (Acme Storefront, Demo — Task Manager). **Real spend figures are shown** ($30.97, $11.56, $0.4655, $30.9662 and token counts). The owner has not yet confirmed these can be public. This is the existing TODO(PO) in `src/data/site.ts`. It is an owner decision, not a QA defect, but it blocks public use of this image.
+- `tasks-board.webp`: shows "Software Factory Website" (the product name, fine), internal TASK-011/012/013 card text and model names. No personal data. The Review column is cut off (see below).
+- `roles.webp`: no personal data. OK.
+- No API keys, tokens, emails or usernames visible in any of the five shipped images.
+
+**Defect filed as TASK-016 (medium):** `docs/imagery-brief.md` quotes the real Windows username (`matthew.williams`), the local path (`D:\Documents\Projects\FlyByFlyBuys`), the client name "Fly by FlyBuys" and a sandbox name. Those strings are in the committed brief on this branch and in `main` history from TASK-010/011. The screenshots are clean; the brief is not.
+
+## Legibility at 360px (mobile)
+
+Viewed the rendered billing and tasks-board figures at 360px, DPR 2:
+
+- The billing usage table text is roughly 3–4 CSS px tall and cannot be read.
+- The tasks-board sidebar and cards cannot be read either.
+
+Page layout is correct (no horizontal scroll), but the screenshots are not legible at this width. **Filed as TASK-014 (medium).**
+
+## Cropping
+
+- `tasks-board.webp`: the image ends mid-way through the Review column. The card "Design brief: product imagery and screenshot showcase plan" is cut mid-word. Its priority badge reads "hi" and its cost line reads "$0.80 / $". **Filed as TASK-017 (low).**
+- Other four crops: no clipped text found at source resolution. `overview.webp` ends cleanly at the stat tiles. `billing-costs.webp` ends at the footnote. `roles.webp` ends at the last card row.
+
+## Layout and overflow
+
+- No horizontal scroll at 360, 768 or 1280, DPR 1 or 2.
+- `.am-glow` extends past the viewport (right edge at 372px at 360 width). It is clipped by an ancestor with `overflow: hidden`; document scrollWidth is unaffected, so it is not a defect.
+
+## Defects filed (follow-up tasks)
+
+| Task | Severity | Owner | Summary |
+| --- | --- | --- | --- |
+| TASK-014 | medium | frontend_developer | Screenshots illegible at 360px |
+| TASK-015 | medium | frontend_developer | Screenshots upscaled about 2x on retina; add 2x sources / srcset |
+| TASK-016 | medium | ui_ux_designer | `docs/imagery-brief.md` quotes real username, client path and project name |
+| TASK-017 | low | ui_ux_designer | `tasks-board.webp` cut mid-card at right edge |
+
+## Open decisions (not defects)
+
+- Owner must confirm the billing screenshot's real spend figures can be public (TODO(PO) in `src/data/site.ts`).
+- PM/QA still need to confirm the regenerated `qa/screenshots/` baselines are intended. `npm test` overwrites them; they were not committed.
+- Git history still contains the real username and client name in `docs/imagery-brief.md`. Removing them from history would need a rewrite, which is the PM's call.
