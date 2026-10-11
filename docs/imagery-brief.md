@@ -50,21 +50,21 @@ Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#12
 Global: crop out the desktop edge visible at the window borders (a blue desktop strip shows at the top and sides in S3/S4). No taskbar or clock appears in any capture, and no notification toasts or other windows are visible, so only the crop of the desktop edge is needed there. No API keys, tokens or emails are visible in any of the four.
 
 - **IMG-S1 Overview**
-  - Local path `D:\Documents\Projects\FlyByFlyBuys` in the review card: redact, or replace with a fictional path. Drive letter and "Documents" reveal the user's layout.
-  - Project and repo names: "Fly by FlyBuys", plus "Software Factory Webs…" and "Demo — Task Manager" in the sidebar, and agent names such as "Riley Research (Programs & Redempti…)" and "Sam Research (Cards & Earn)". These look like a real client project; replace with demo names (e.g. "Acme Storefront").
-  - Activity stream: sandbox name `sf-fly-by-flybuys-quinn-qa-task-012` and task text mention the real project; edit or crop the stream.
+  - A local project path in the review card: redact, or replace with a fictional path such as `D:\Projects\<project>`. Drive letter and folder names reveal the user's layout.
+  - Project and repo names: the real client project name, plus "Software Factory Webs…" and "Demo — Task Manager" in the sidebar, and agent names such as "Riley Research (Programs & Redempti…)" and "Sam Research (Cards & Earn)". These look like a real client project; replace with demo names (e.g. "Acme Storefront").
+  - Activity stream: the sandbox name and task text mention the real project; edit or crop the stream.
   - Costs are `$0.00`/`$20.00` budget; harmless.
 - **IMG-S2 Agent chat**
-  - **Must redact**: the message contains `C:/Users/matthew.williams/AppData/Roaming/dev.aisoftwarefactory.app/projects/fly-by-flybuys/...`, a real Windows username (full name). Also `D:/Documents/Projects/FlyByFlyBuys/.git/worktrees/TASK-006`. Replace the text with fictional paths (`C:/Users/<name>/...`), or choose a different conversation.
+  - **Must redact**: the message contains an absolute Windows path under `C:/Users/<user>/AppData/...` that exposes a real username (full name), plus a local worktree path on another drive. Replace the text with fictional paths (`C:/Users/<name>/...`), or choose a different conversation.
   - Project and agent names as in S1.
   - The conversation is a blocked-task escalation; check it fits the marketing story before use.
 - **IMG-S3 Billing & costs**
   - Real spend figures ($30.97, $11.56, $0.47, $0.40, token counts, `$0.4655`, `$30.9662`) are real usage. The owner allows inflating numbers, but only in a redrawn graphic or edited demo data, and any framed screenshot with edited numbers must not be presented as a genuine capture without the owner agreeing. Recommended: use a redrawn illustration for numbers and keep the screenshot with demo project names.
-  - Project names (Fly by FlyBuys etc.) and the blank-name row: replace with demo names.
+  - Real client project names and the blank-name row: replace with demo names.
   - Sidebar project list: as S1.
 - **IMG-S4 Roles**
   - No personal data. The role names differ slightly from `site.team.roles` ("Software Architect", "UI/UX Designer", "Full Stack Developer" in the app). Page copy should either match the app wording or keep the site wording consistently; this brief recommends keeping `site.team.roles` and letting the screenshot show the app wording.
-  - Sidebar project names ("Fly by FlyBuys" etc.): crop the sidebar, or replace with demo names.
+  - Real sidebar project names: crop the sidebar, or replace with demo names.
 
 ## SVG audit against the screenshots
 
@@ -79,4 +79,4 @@ Global: crop out the desktop edge visible at the window borders (a blue desktop 
 |----|-------------|---------------|----------|---------|-----------|
 | IMG-S5 | `chcklist.png` | Tasks tab: kanban board (Backlog / Ready / In Progress / Review) with task cards, priority badges, per-task budget, agent list in the sidebar | "The Tasks board: task cards moving through Backlog, Ready, In Progress and Review, each assigned to an agent with a per-task budget." | Features (task decomposition) or HowItWorks (agents build) | Framed screenshot in the AppMock Windows frame |
 
-Redaction: shows the project names "Software Factory Website" and "Fly by FlyBuys" in the sidebar (crop or replace), real per-task spend figures and Docker/provider status text in the footer strip (crop). No usernames, paths, keys or emails visible. Crop the desktop strip at the window edge. Planned file: `public/images/screenshots/tasks-board.png`.
+Redaction: shows the project names "Software Factory Website" and a real client project in the sidebar (crop or replace), real per-task spend figures and Docker/provider status text in the footer strip (crop). No usernames, paths, keys or emails visible. Crop the desktop strip at the window edge. Planned file: `public/images/screenshots/tasks-board.png`.
