@@ -50,6 +50,7 @@ test('tasks-board screenshot does not end mid-card at the right edge (TASK-017)'
       const ctx = c.getContext('2d');
       ctx.drawImage(img, 0, 0);
       // Board area right of the In Progress column: must be plain background (no cut card).
+      // Samples x>=980, y>=230 only; x 976-979 and the <=5/255 residual at 984-985 are sub-threshold and not covered.
       const { data } = ctx.getImageData(980, 230, img.width - 980, img.height - 230);
       let n = 0;
       for (let i = 0; i < data.length; i += 4) {
