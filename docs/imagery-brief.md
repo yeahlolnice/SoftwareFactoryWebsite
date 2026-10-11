@@ -1,53 +1,74 @@
 # Imagery brief: product imagery and screenshot showcase plan
 
-> **PROVISIONAL: no real app screenshots were supplied (/vault/context empty as of 2026-10-11). All items are marked `no screenshot reference`. Revisit when the owner uploads screenshots.**
+> **Screenshots received.** Four real app screenshots were supplied in `/vault/context` (README: "screen grabs from the product"). This brief maps each to a page section. They contain sensitive data and must be cropped/redacted before use (see Redaction). The owner also said the numbers on the billing/cost image may be "fluffed up a little" in a *graphic*; that applies to a redrawn graphic only, not to the raw capture (see IMG-S3).
 
-Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#121820`, border `#2a3441`, accent `#3ddc97`, info `#5cb8ff`, warn `#f5b544`, violet `#a78bfa`). Windows-app framing: the existing Windows-window frame from `AppMock`. No fake "real UI" captures are produced; the SVGs below are stylised illustrations.
+Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#121820`, border `#2a3441`, accent `#3ddc97`, info `#5cb8ff`, warn `#f5b544`, violet `#a78bfa`). The real app is a dark UI with a navy-black background, a blue/violet gradient for cost bars, a blue primary button, green "RUNNING" status and red notification badges. It sits comfortably next to the site palette; the Windows frame (title bar "AI Software Factory", min/max/close) is already part of each capture.
 
-## Image inventory
+## The four supplied screenshots
 
-| ID | Image | Alt text | Section | Treatment | Reference |
-|----|-------|----------|---------|-----------|-----------|
-| IMG-01 | Main app window (project board with agents) | "The Software Factory desktop app showing a task board with AI agents working in parallel." | Hero | Framed screenshot (PLACEHOLDER slot, currently the animated AppMock) | no screenshot reference |
-| IMG-02 | Plan review / task decomposition view | "The plan review screen listing the tasks an agent team proposes, ready for approval." | HowItWorks | Framed screenshot (PLACEHOLDER slot, currently the stylised SVG `orchestration-flow.svg`) | no screenshot reference |
-| IMG-03 | Orchestration flow graphic | "Four steps: describe the objective, review the plan, agents build on separate branches, then review and ship." | HowItWorks | Stylised SVG illustration: `public/images/orchestration-flow.svg` | no screenshot reference |
-| IMG-04 | Agent-team diagram | "A Project Manager agent coordinating Architect, Designer, Frontend, Backend, DevOps, QA and SEO agents." | AgentRoles | Stylised SVG illustration: `public/images/agent-team.svg` | no screenshot reference |
-| IMG-05 | Agent roster / activity view | "The agent roster showing each agent's role, current task and status." | AgentRoles | Framed screenshot (PLACEHOLDER slot, currently IMG-04) | no screenshot reference |
-| IMG-06 | Feature: agent orchestration | "Central node connected to four agent nodes." | Features | Stylised SVG illustration: `public/images/features/agent-orchestration.svg` | no screenshot reference |
-| IMG-07 | Feature: task decomposition | "One large task split into three smaller tasks." | Features | Stylised SVG illustration: `features/task-decomposition.svg` | no screenshot reference |
-| IMG-08 | Feature: budget control | "A gauge showing spend against a budget limit." | Features | Stylised SVG illustration: `features/budget-control.svg` | no screenshot reference |
-| IMG-09 | Feature: approval gates | "A checkpoint gate with a tick that work must pass." | Features | Stylised SVG illustration: `features/approval-gates.svg` | no screenshot reference |
-| IMG-10 | Feature: sandboxed execution | "A dashed boundary containing a terminal prompt." | Features | Stylised SVG illustration: `features/sandboxed-execution.svg` | no screenshot reference |
-| IMG-11 | Feature: git branch per task | "A main line with task branches merging back." | Features | Stylised SVG illustration: `features/branch-per-task.svg` | no screenshot reference |
-| IMG-12 | Finished project / review-and-merge view | "The review screen showing a completed task with its diff and an approve button." | Proof | Framed screenshot (PLACEHOLDER slot, currently the AppMock) | no screenshot reference |
-| IMG-13 | Social card | "Software Factory: run a whole team of AI agents." (og:image:alt) | Meta (all pages) | Stylised SVG rendered to PNG: `public/og.png` (1200x630), source `public/images/og-source.svg` | no screenshot reference |
+| ID | Source file | What it shows | Alt text | Section | Treatment |
+|----|-------------|---------------|----------|---------|-----------|
+| IMG-S1 | `Softwarefactory-1.png` | Overview of a running project: status "RUNNING", budget bar, "Waiting for you" project-review card with Accept / Request more work, stat tiles (10/12 tasks complete, 1/9 agents active, spent, blocked), team list and project activity stream | "The Software Factory Overview screen: a running project with a review card waiting for approval, task and budget stats, the agent team and a live activity feed." | Hero (primary) and Proof | Framed screenshot in the AppMock Windows frame. Replaces the animated AppMock in the Hero or sits beside it. |
+| IMG-S2 | `Softwarefactory-agent-chat-1.png` | Chat tab: direct messages with the Project Manager and specialist agents, task-tagged replies, escalation to the human | "Direct chat with the Project Manager agent, who escalates a blocked task to the human for a decision." | HowItWorks (the "you stay in charge" / review step) | Framed screenshot. Needs the heaviest redaction (a full Windows profile path is visible). |
+| IMG-S3 | `softwarefactory-project-cost-1.png` | Billing & Cost Control: totals, spend-by-project bars, usage detail table (requests, tokens, cache, cost, billed) | "The Billing and Cost Control screen showing spend by project and a usage table of tokens and costs." | Features (budget control) and Proof | Framed screenshot, cropped; also a good source for a redrawn "cost" graphic with demo numbers (see below). |
+| IMG-S4 | `softwarefactory-roles-1.png` | Roles library: 17 built-in role cards with tier badges, "Create Custom Role" | "The Roles screen: a library of built-in agent roles such as Project Manager, Architect, Developer, QA and SEO, each with a model tier." | AgentRoles | Framed screenshot. Lowest risk: contains no personal data. |
 
-## Slot table: screenshots vs illustrations
+## Illustrations and graphics (SVG, stay illustrations)
 
-| Becomes a real framed Windows-window screenshot once supplied | Stays an illustration |
-|---|---|
-| IMG-01 Hero, IMG-02 HowItWorks, IMG-05 AgentRoles, IMG-12 Proof | IMG-03, IMG-04 (diagrams); IMG-06 to IMG-11 (feature icons); IMG-13 (og card) |
+| ID | Image | Alt text | Section | File |
+|----|-------|----------|---------|------|
+| IMG-03 | Orchestration flow | "Four steps: describe the objective, review the plan, agents build on separate branches, then review and ship." | HowItWorks | `public/images/orchestration-flow.svg` |
+| IMG-04 | Agent-team diagram | "A Project Manager agent coordinating Architect, Designer, Frontend, Backend, DevOps, QA and SEO agents." | AgentRoles | `public/images/agent-team.svg` |
+| IMG-06 | Feature: agent orchestration | "Central node connected to four agent nodes." | Features | `features/agent-orchestration.svg` |
+| IMG-07 | Feature: task decomposition | "One large task split into three smaller tasks." | Features | `features/task-decomposition.svg` |
+| IMG-08 | Feature: budget control | "A gauge showing spend against a budget limit." | Features | `features/budget-control.svg` |
+| IMG-09 | Feature: approval gates | "A checkpoint gate with a tick that work must pass." | Features | `features/approval-gates.svg` |
+| IMG-10 | Feature: sandboxed execution | "A dashed boundary containing a terminal prompt." | Features | `features/sandboxed-execution.svg` |
+| IMG-11 | Feature: git branch per task | "A main line with task branches merging back." | Features | `features/branch-per-task.svg` |
+| IMG-13 | Social card | "Software Factory: run a whole team of AI agents." | Meta | `public/og.png` (1200x630), source `public/images/og-source.svg` |
 
-Real screenshots go in `public/images/screenshots/` and are shown inside the existing Windows-window frame from `AppMock` (title bar, window controls, `--shadow-mock`). Until then, placeholder slots keep the current SVG or animated AppMock. Swap procedure: drop the PNG in, add `width`/`height`, `loading="lazy"` (not on the Hero), keep the alt text above, and re-check Lighthouse CLS.
+## Slot table: framed screenshot vs illustration
 
-## New graphics (created in this task)
+| Section | Framed real screenshot (AppMock Windows frame) | Illustration kept |
+|---|---|---|
+| Hero | IMG-S1 (replaces/complements the animated AppMock) | none |
+| Features | IMG-S3 (budget control spotlight) | IMG-06 to IMG-11 icons |
+| HowItWorks | IMG-S2 | IMG-03 flow graphic |
+| AgentRoles | IMG-S4 | IMG-04 team diagram |
+| Proof | IMG-S1 (a cropped second view) or IMG-S3 | none |
+| Meta | none | IMG-13 og card |
 
-All use exact tokens.css hex values, carry `<title>`/`<desc>` plus `role="img"`, and are not wired into pages yet.
+## Swap procedure
 
-- `public/images/features/*.svg`: six 160x120 feature illustrations (IMG-06 to IMG-11), matching `site.features.items[].id`.
-- `public/images/agent-team.svg`: 640x360 PM-to-roles diagram (IMG-04). Eight roles in `site.team.roles`; the diagram shows seven plus the PM. Backend is shown, so all roles are covered.
-- `public/images/orchestration-flow.svg`: 720x200, four steps matching `howItWorks.steps` (IMG-03). Step copy is TODO(PO) in site.ts; update labels if it changes.
-- `public/og.png` regenerated at 1200x630 from `public/images/og-source.svg` (favicon mark, headline, mini team diagram). Re-render with Playwright at a 1200x630 viewport after editing the source.
+1. Redact and crop each file per the next section; export PNG (or WebP) to `public/images/screenshots/` as `overview.png`, `agent-chat.png`, `billing-costs.png`, `roles.png`.
+2. Render inside the existing AppMock Windows-window frame (`--shadow-mock`). The captures already include the app title bar, so show them in the frame without a second fake title bar, or crop the bar and let the frame supply it.
+3. Add `width`/`height`, `loading="lazy"` (not for the Hero image), and the alt text above.
+4. Re-check Lighthouse CLS and update the Reference notes in this table.
 
-Note: SVG text uses system fonts (Segoe UI fallback); outline text if exact rendering matters.
+## Redaction (per screenshot)
 
-## Redaction checklist (for when real screenshots arrive)
+Global: crop out the desktop edge visible at the window borders (a blue desktop strip shows at the top and sides in S3/S4). No taskbar or clock appears in any capture, and no notification toasts or other windows are visible, so only the crop of the desktop edge is needed there. No API keys, tokens or emails are visible in any of the four.
 
-- [ ] Windows usernames and user-profile paths (`C:\Users\<name>`), including title bars, file pickers and breadcrumbs
-- [ ] Real project and repo names (use fictional ones, e.g. "Acme Storefront")
-- [ ] API keys, tokens and secrets in settings or logs (use fictional demo values, or hide the field)
-- [ ] Provider account emails and org names
-- [ ] Billing and budget figures that are not demo data
-- [ ] Windows taskbar and clock
-- [ ] Notification toasts and other open windows
-- [ ] Crop to the app window only; use fictional demo data throughout; check agent output text for pasted secrets
+- **IMG-S1 Overview**
+  - Local path `D:\Documents\Projects\FlyByFlyBuys` in the review card: redact, or replace with a fictional path. Drive letter and "Documents" reveal the user's layout.
+  - Project and repo names: "Fly by FlyBuys", plus "Software Factory Webs…" and "Demo — Task Manager" in the sidebar, and agent names such as "Riley Research (Programs & Redempti…)" and "Sam Research (Cards & Earn)". These look like a real client project; replace with demo names (e.g. "Acme Storefront").
+  - Activity stream: sandbox name `sf-fly-by-flybuys-quinn-qa-task-012` and task text mention the real project; edit or crop the stream.
+  - Costs are `$0.00`/`$20.00` budget; harmless.
+- **IMG-S2 Agent chat**
+  - **Must redact**: the message contains `C:/Users/matthew.williams/AppData/Roaming/dev.aisoftwarefactory.app/projects/fly-by-flybuys/...`, a real Windows username (full name). Also `D:/Documents/Projects/FlyByFlyBuys/.git/worktrees/TASK-006`. Replace the text with fictional paths (`C:/Users/<name>/...`), or choose a different conversation.
+  - Project and agent names as in S1.
+  - The conversation is a blocked-task escalation; check it fits the marketing story before use.
+- **IMG-S3 Billing & costs**
+  - Real spend figures ($30.97, $11.56, $0.47, $0.40, token counts, `$0.4655`, `$30.9662`) are real usage. The owner allows inflating numbers, but only in a redrawn graphic or edited demo data, and any framed screenshot with edited numbers must not be presented as a genuine capture without the owner agreeing. Recommended: use a redrawn illustration for numbers and keep the screenshot with demo project names.
+  - Project names (Fly by FlyBuys etc.) and the blank-name row: replace with demo names.
+  - Sidebar project list: as S1.
+- **IMG-S4 Roles**
+  - No personal data. The role names differ slightly from `site.team.roles` ("Software Architect", "UI/UX Designer", "Full Stack Developer" in the app). Page copy should either match the app wording or keep the site wording consistently; this brief recommends keeping `site.team.roles` and letting the screenshot show the app wording.
+  - Sidebar project names ("Fly by FlyBuys" etc.): crop the sidebar, or replace with demo names.
+
+## SVG audit against the screenshots
+
+- All nine SVGs now carry `<title>` and `<desc>` and `role="img"` (og-source.svg was missing both and was fixed in this pass).
+- `agent-team.svg` roster checked against `site.team.roles` (Project Manager, Architect, Designer, Frontend Developer, Backend Developer, DevOps Engineer, QA Engineer, SEO Specialist): all eight are present (PM plus seven). The earlier note that one role was missing was wrong; no roster change was needed. Labels are shortened (Frontend, Backend, DevOps, QA), consistent with the site and the app.
+- Colour check: the SVGs use the tokens.css palette. The real app uses a navy-black background with blue/violet cost bars; the tokens are close enough and no recolouring is needed.
+- SVG text uses system fonts (Segoe UI fallback); outline the text if exact rendering matters. Only og-source.svg has been rendered (to `og.png`); the other SVGs are not wired into pages.
