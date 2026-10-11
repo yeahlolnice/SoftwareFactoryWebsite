@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<title id="t">Git branch per task</title><desc id="d">A main line with two task branches merging back.</desc>
+<rect width="160" height="120" rx="10" fill="#121820" stroke="#2a3441"/>
+<path d="M20 90H140" stroke="#2a3441"/><path d="M45 90C45 60 60 45 80 45H100M100 45C115 45 115 90 115 90" stroke="#5cb8ff"/><path d="M60 90C60 75 70 70 80 70" stroke="#a78bfa"/><g fill="#0b0f14" stroke="#3ddc97"><circle cx="45" cy="90" r="5"/><circle cx="115" cy="90" r="5"/></g><circle cx="80" cy="45" r="5" fill="#5cb8ff" stroke="none"/><circle cx="80" cy="70" r="5" fill="#a78bfa" stroke="none"/>
+</svg>

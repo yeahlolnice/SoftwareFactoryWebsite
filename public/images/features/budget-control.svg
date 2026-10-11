@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<title id="t">Budget control</title><desc id="d">A gauge showing spend against a limit.</desc>
+<rect width="160" height="120" rx="10" fill="#121820" stroke="#2a3441"/>
+<path d="M30 90A50 50 0 0 1 130 90" stroke="#2a3441" stroke-width="10"/><path d="M30 90A50 50 0 0 1 95 43" stroke="#3ddc97" stroke-width="10"/><path d="M80 90L100 60" stroke="#e6edf3"/><circle cx="80" cy="90" r="5" fill="#e6edf3" stroke="none"/><circle cx="130" cy="90" r="0"/>
+</svg>

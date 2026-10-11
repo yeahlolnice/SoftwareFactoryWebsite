@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<title id="t">Agent orchestration</title><desc id="d">One central node connected to four agent nodes.</desc>
+<rect width="160" height="120" rx="10" fill="#121820" stroke="#2a3441"/>
+<g stroke="#2a3441"><path d="M80 60L35 30M80 60L125 30M80 60L35 92M80 60L125 92"/></g><circle cx="80" cy="60" r="14" fill="#0f2a21" stroke="#3ddc97"/><g fill="#1a222d" stroke="#5cb8ff"><circle cx="35" cy="30" r="9"/><circle cx="125" cy="30" r="9"/><circle cx="35" cy="92" r="9"/><circle cx="125" cy="92" r="9"/></g>
+</svg>

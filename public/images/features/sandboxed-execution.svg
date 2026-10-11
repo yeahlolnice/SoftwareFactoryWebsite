@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<title id="t">Sandboxed execution</title><desc id="d">A dashed boundary containing a terminal prompt.</desc>
+<rect width="160" height="120" rx="10" fill="#121820" stroke="#2a3441"/>
+<rect x="25" y="20" width="110" height="80" rx="8" stroke="#a78bfa" stroke-dasharray="6 5"/><rect x="40" y="35" width="80" height="50" rx="5" fill="#0b0f14" stroke="#2a3441"/><path d="M50 52l10 8-10 8M68 70h20" stroke="#3ddc97"/>
+</svg>

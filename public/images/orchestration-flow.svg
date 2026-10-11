@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 720 200" fill="none" font-family="Segoe UI, system-ui, sans-serif" font-size="13">
+<title id="t">Orchestration flow</title><desc id="d">Four steps: describe the objective, review the plan, agents build in parallel on their own branches, then review and ship.</desc>
+<rect width="720" height="200" rx="12" fill="#0b0f14"/>
+<g stroke="#3ddc97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M160 90H190M340 90H370M520 90H550M180 84l10 6-10 6M360 84l10 6-10 6M540 84l10 6-10 6"/></g>
+<g fill="#121820" stroke="#2a3441" stroke-width="1.5"><rect x="20" y="55" width="140" height="70" rx="10"/><rect x="200" y="55" width="140" height="70" rx="10"/><rect x="380" y="55" width="140" height="70" rx="10" stroke="#3ddc97"/><rect x="560" y="55" width="140" height="70" rx="10"/></g>
+<g fill="#0f2a21" stroke="#3ddc97"><circle cx="40" cy="55" r="12"/><circle cx="220" cy="55" r="12"/><circle cx="400" cy="55" r="12"/><circle cx="580" cy="55" r="12"/></g>
+<g fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="700"><text x="40" y="59">1</text><text x="220" y="59">2</text><text x="400" y="59">3</text><text x="580" y="59">4</text></g>
+<g fill="#e6edf3" text-anchor="middle" font-weight="600"><text x="90" y="95">Describe</text><text x="270" y="95">Review plan</text><text x="450" y="95">Agents build</text><text x="630" y="95">Review &amp; ship</text></g>
+<g fill="#9aa7b5" text-anchor="middle" font-size="12"><text x="90" y="113">your goal</text><text x="270" y="113">approve tasks</text><text x="450" y="113">branch per task</text><text x="630" y="113">merge on approval</text></g>
+<path d="M450 125v25M410 150h80" stroke="#2a3441" stroke-width="1.5"/><g fill="#5cb8ff"><circle cx="410" cy="158" r="5"/></g><g fill="#a78bfa"><circle cx="450" cy="158" r="5"/></g><g fill="#f5b544"><circle cx="490" cy="158" r="5"/></g>
+</svg>

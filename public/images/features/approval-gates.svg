@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" viewBox="0 0 160 120" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<title id="t">Human approval gates</title><desc id="d">A checkpoint gate with a tick that work must pass.</desc>
+<rect width="160" height="120" rx="10" fill="#121820" stroke="#2a3441"/>
+<path d="M15 60H55M105 60H145" stroke="#2a3441"/><rect x="55" y="30" width="50" height="60" rx="8" fill="#0f2a21" stroke="#3ddc97"/><path d="M68 60l8 8 16-17" stroke="#3ddc97" stroke-width="3"/><circle cx="25" cy="60" r="4" fill="#f5b544" stroke="none"/><circle cx="135" cy="60" r="4" fill="#3ddc97" stroke="none"/>
+</svg>
