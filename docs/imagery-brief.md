@@ -38,6 +38,16 @@ Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#12
 | Proof | IMG-S1 (a cropped second view) or IMG-S3 | none |
 | Meta | none | IMG-13 og card |
 
+## Social card (OG / Twitter, IMG-13)
+
+`public/og.png` (1200x630) is the og:image and twitter:image. It shows the headline on the left and the real Overview screenshot (`screenshots/overview.webp`) on the right, so the card matches what the page shows. Regenerate with sharp (installed as an Astro dependency), then re-run `npm test`:
+
+1. Render `public/images/og-source.svg` to a 1200x630 PNG.
+2. Resize `public/images/screenshots/overview.webp` to 520x189 and composite it at left 620, top 220.
+3. Write the result to `public/og.png`.
+
+The alt text is `site.seo.ogImageAlt`. The billing capture is not used on the card or in JSON-LD until the owner confirms its spend figures can be public (TODO(PO) in `site.ts`).
+
 ## Swap procedure
 
 1. Redact and crop each file per the next section; export PNG (or WebP) to `public/images/screenshots/` as `overview.png`, `agent-chat.png`, `billing-costs.png`, `roles.png`.

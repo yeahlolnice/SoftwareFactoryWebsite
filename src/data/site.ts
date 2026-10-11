@@ -214,7 +214,7 @@ export const site: Site = {
     description:
       'A Windows desktop app that manages a team of AI agents with real roles. Hand them a goal and watch them plan, build, test and deliver a whole project.',
     ogImage: '/og.png',
-    ogImageAlt: 'Software Factory logo above the line "Run a whole team of AI agents."',
+    ogImageAlt: 'Software Factory card: the headline "Run a whole team of AI agents" beside a screenshot of the app\'s Overview screen.',
     keywords: ['AI agents', 'agent orchestration', 'Windows desktop app', 'AI software team'],
   },
 
