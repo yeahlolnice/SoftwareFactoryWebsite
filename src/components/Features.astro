@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import Screenshot from './Screenshot.astro';
 import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
 
@@ -22,6 +23,10 @@ const { features } = site;
         ))
       }
     </ul>
+    <div class="showcase section__body">
+      <Screenshot image={site.imagery.billing} wide />
+      <Screenshot image={site.imagery.tasksBoard} wide />
+    </div>
     <p class="section__cta">
       <a class="text-link" href={features.closing.href}>
         {features.closing.label}
@@ -32,6 +37,10 @@ const { features } = site;
 </section>
 
 <style>
+  .showcase {
+    display: grid;
+    gap: var(--space-10);
+  }
   .feature-grid {
     display: grid;
     gap: var(--grid-gap);

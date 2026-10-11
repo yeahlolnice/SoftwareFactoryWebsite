@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import Button from './Button.astro';
+import Screenshot from './Screenshot.astro';
 import AppMock from './AppMock.astro';
 
 const { hero } = site;
@@ -28,10 +29,16 @@ const { hero } = site;
     <div class="hero__mock">
       <AppMock />
     </div>
+    <div class="hero__real">
+      <Screenshot image={site.imagery.overview} wide />
+    </div>
   </div>
 </section>
 
 <style>
+  .hero__real {
+    margin-top: var(--space-10);
+  }
   .hero {
     position: relative;
     padding-block: var(--space-10) var(--section-pad);

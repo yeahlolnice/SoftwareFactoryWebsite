@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import Button from './Button.astro';
+import Screenshot from './Screenshot.astro';
 import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
 
@@ -42,6 +43,10 @@ const { team } = site;
         ))
       }
     </ol>
+    <div class="showcase section__body">
+      <img class="showcase__team" src={site.imagery.teamDiagram.src} width={site.imagery.teamDiagram.width} height={site.imagery.teamDiagram.height} loading="lazy" decoding="async" alt={site.imagery.teamDiagram.alt} />
+      <Screenshot image={site.imagery.roles} wide />
+    </div>
     <div class="section__cta">
       <Button href={team.cta.href} external={team.cta.external} download cta="download" variant="secondary">
         {team.cta.label}
@@ -51,6 +56,16 @@ const { team } = site;
 </section>
 
 <style>
+  .showcase {
+    display: grid;
+    gap: var(--space-10);
+  }
+  .showcase__team {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    margin-inline: auto;
+  }
   .role-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

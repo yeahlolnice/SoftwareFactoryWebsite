@@ -227,3 +227,31 @@ test.describe('accessibility', () => {
     });
   }
 });
+
+test.describe('imagery', () => {
+  for (const width of [390, 1280]) {
+    test(`images load without 404 and have alt text at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      const bad: string[] = [];
+      page.on('response', (res) => {
+        if (res.url().includes('/images/') && res.status() >= 400) bad.push(res.url());
+      });
+      await page.goto('/');
+      const imgs = page.locator('img[src^="/images/"]');
+      expect(await imgs.count()).toBeGreaterThanOrEqual(7);
+      for (const img of await imgs.all()) {
+        await img.scrollIntoViewIfNeeded();
+        await expect(img).toHaveJSProperty('complete', true);
+      }
+      const info = await imgs.evaluateAll((els) =>
+        (els as HTMLImageElement[]).map((i) => ({ src: i.src, alt: i.alt, ok: i.complete && i.naturalWidth > 0 })),
+      );
+      for (const i of info) {
+        expect(i.alt.length, i.src).toBeGreaterThan(10);
+        expect(i.ok, `loaded: ${i.src}`).toBe(true);
+      }
+      expect(bad).toEqual([]);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    });
+  }
+});
