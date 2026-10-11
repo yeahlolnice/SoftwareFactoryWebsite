@@ -134,7 +134,7 @@ Side effect: `npm test` regenerates `qa/screenshots/home-{360,768,1280}.png`. Th
 - `roles.webp`: no personal data. OK.
 - No API keys, tokens, emails or usernames visible in any of the five shipped images.
 
-**Defect filed as TASK-016 (medium):** `docs/imagery-brief.md` quotes the real Windows username (`matthew.williams`), the local path (`D:\Documents\Projects\FlyByFlyBuys`), the client name "Fly by FlyBuys" and a sandbox name. Those strings are in the committed brief on this branch and in `main` history from TASK-010/011. The screenshots are clean; the brief is not.
+**Defect filed as TASK-016 (medium):** `docs/imagery-brief.md` quoted a real Windows username, a local project path, a client project name and a sandbox name (values omitted here on purpose). Those strings are in the committed brief on this branch and in `main` history from TASK-010/011. The screenshots are clean; the brief is not.
 
 ## Legibility at 360px (mobile)
 
