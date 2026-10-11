@@ -72,3 +72,11 @@ Global: crop out the desktop edge visible at the window borders (a blue desktop 
 - `agent-team.svg` roster checked against `site.team.roles` (Project Manager, Architect, Designer, Frontend Developer, Backend Developer, DevOps Engineer, QA Engineer, SEO Specialist): all eight are present (PM plus seven). The earlier note that one role was missing was wrong; no roster change was needed. Labels are shortened (Frontend, Backend, DevOps, QA), consistent with the site and the app.
 - Colour check: the SVGs use the tokens.css palette. The real app uses a navy-black background with blue/violet cost bars; the tokens are close enough and no recolouring is needed.
 - SVG text uses system fonts (Segoe UI fallback); outline the text if exact rendering matters. Only og-source.svg has been rendered (to `og.png`); the other SVGs are not wired into pages.
+
+## Additional screenshot: Tasks board (`chcklist.png`)
+
+| ID | Source file | What it shows | Alt text | Section | Treatment |
+|----|-------------|---------------|----------|---------|-----------|
+| IMG-S5 | `chcklist.png` | Tasks tab: kanban board (Backlog / Ready / In Progress / Review) with task cards, priority badges, per-task budget, agent list in the sidebar | "The Tasks board: task cards moving through Backlog, Ready, In Progress and Review, each assigned to an agent with a per-task budget." | Features (task decomposition) or HowItWorks (agents build) | Framed screenshot in the AppMock Windows frame |
+
+Redaction: shows the project names "Software Factory Website" and "Fly by FlyBuys" in the sidebar (crop or replace), real per-task spend figures and Docker/provider status text in the footer strip (crop). No usernames, paths, keys or emails visible. Crop the desktop strip at the window edge. Planned file: `public/images/screenshots/tasks-board.png`.
