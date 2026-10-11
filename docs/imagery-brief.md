@@ -55,7 +55,7 @@ Global: crop out the desktop edge visible at the window borders (a blue desktop 
   - Activity stream: the sandbox name and task text mention the real project; edit or crop the stream.
   - Costs are `$0.00`/`$20.00` budget; harmless.
 - **IMG-S2 Agent chat**
-  - **Must redact**: the message contains an absolute Windows path under `C:/Users/<user>/AppData/...` that exposes a real username (full name), plus a local worktree path on another drive. Replace the text with fictional paths (`C:/Users/<name>/...`), or choose a different conversation.
+  - **Must redact**: the message contains an absolute Windows path under `C:/Users/<user>/AppData/...` that exposes a real username (full name), plus a local worktree path on another drive. Replace the text with fictional paths (`C:/Users/<user>/...`), or choose a different conversation.
   - Project and agent names as in S1.
   - The conversation is a blocked-task escalation; check it fits the marketing story before use.
 - **IMG-S3 Billing & costs**
