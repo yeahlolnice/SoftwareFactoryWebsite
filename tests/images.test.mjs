@@ -39,7 +39,8 @@ test('tasks-board screenshot does not end mid-card at the right edge (TASK-017)'
   try {
     ({ chromium } = await import('@playwright/test'));
   } catch {
-    ({ chromium } = await import('/usr/lib/node_modules/playwright/index.mjs'));
+    // Fallback: some sandboxes only have a global playwright install (no local @playwright/test).
+    ({ chromium } = await import('playwright'));
   }
   const b64 = readFileSync(new URL('../public/images/screenshots/tasks-board.webp', import.meta.url)).toString('base64');
   const browser = await chromium.launch();
