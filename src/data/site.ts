@@ -12,6 +12,7 @@
 //   - howItWorks.steps (marked TODO(PO)): confirm the four step titles and copy
 //   - features.items (marked TODO(PO)): confirm the six feature claims
 //   - screenshots: redacted captures live in public/images/screenshots (see docs/imagery-brief.md); all alt text and captions are in `imagery`.
+//     The hero overview is Softwarefactory-1.png with project names/path swapped for demo names (disclosed in its caption).
 //     The billing capture keeps real spend figures. TODO(PO): confirm they may be public.
 
 export type Img = { src: string; width: number; height: number; alt: string; caption?: string };
@@ -320,7 +321,7 @@ export const site: Site = {
   proof: [],
   imagery: {
     windowTitle: 'AI Software Factory',
-    overview: { src: '/images/screenshots/overview.webp', width: 964, height: 350, alt: 'The Software Factory Overview screen: a running project with a review card waiting for approval and task, agent and budget stats.', caption: 'The real app: a finished project waiting for your review.' },
+    overview: { src: '/images/screenshots/overview.webp', width: 964, height: 350, alt: 'The Software Factory Overview screen: a running project with a review card waiting for approval and task, agent and budget stats.', caption: 'The app: a finished project waiting for your review. Project names and paths are replaced with demo names.' },
     agentChat: { src: '/images/screenshots/agent-chat.webp', width: 628, height: 237, alt: 'A direct message thread with the Project Manager agent, who replies to a specialist agent and keeps the work moving.', caption: 'Chat with any agent directly, and stay in charge of every decision.' },
     billing: { src: '/images/screenshots/billing-costs.webp', width: 1203, height: 780, alt: 'The Billing and Cost Control screen showing spend by project and a usage table of requests, tokens and costs.', caption: 'Spend by project, agent, model or task, with a budget you control.' },
     tasksBoard: { src: '/images/screenshots/tasks-board.webp', width: 1203, height: 700, alt: 'The Tasks board: task cards moving through Backlog, Ready, In Progress and Review, each assigned to an agent with a per-task budget.', caption: 'A task board your agents work through, one branch per task.' },
