@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { chromium } from '@playwright/test';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 
 const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
@@ -35,13 +36,6 @@ test('every local image file exists and is under 300KB', () => {
 });
 
 test('tasks-board screenshot does not end mid-card at the right edge (TASK-017)', async () => {
-  let chromium;
-  try {
-    ({ chromium } = await import('@playwright/test'));
-  } catch {
-    // Fallback: some sandboxes only have a global playwright install (no local @playwright/test).
-    ({ chromium } = await import('playwright'));
-  }
   const b64 = readFileSync(new URL('../public/images/screenshots/tasks-board.webp', import.meta.url)).toString('base64');
   const browser = await chromium.launch();
   try {
@@ -56,7 +50,7 @@ test('tasks-board screenshot does not end mid-card at the right edge (TASK-017)'
       const ctx = c.getContext('2d');
       ctx.drawImage(img, 0, 0);
       // Board area right of the In Progress column: must be plain background (no cut card).
-      const { data } = ctx.getImageData(990, 230, img.width - 990, img.height - 230);
+      const { data } = ctx.getImageData(980, 230, img.width - 980, img.height - 230);
       let n = 0;
       for (let i = 0; i < data.length; i += 4) {
         if (Math.abs(data[i] - 11) > 6 || Math.abs(data[i + 1] - 14) > 6 || Math.abs(data[i + 2] - 20) > 6) n++;
