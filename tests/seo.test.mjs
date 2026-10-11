@@ -65,6 +65,15 @@ test('FAQPage JSON-LD matches the visible FAQ questions and answers', () => {
   }
 });
 
+test('JSON-LD image and screenshot URLs point at files in dist', () => {
+  const app = ldBlocks().find((b) => b['@type'] === 'SoftwareApplication');
+  const urls = [app.image, ...app.screenshot.map((s) => s.url)];
+  for (const url of urls) {
+    const path = new URL(url).pathname;
+    assert.ok(existsSync(new URL(`dist${path}`, root)), `JSON-LD image missing from dist: ${url}`);
+  }
+});
+
 test('JSON-LD cannot break out of its script element', () => {
   for (const block of [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]) {
     assert.doesNotMatch(block[1], /<\/script/i);
