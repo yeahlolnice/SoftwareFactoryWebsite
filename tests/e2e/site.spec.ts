@@ -255,3 +255,27 @@ test.describe('imagery', () => {
     });
   }
 });
+
+test.describe('screenshot legibility at 360px', () => {
+  test.use({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2 });
+
+  test('screenshots render at readable scale inside a scrollable frame, no page overflow', async ({ page }) => {
+    await page.goto('/');
+    const imgs = page.locator('figure.shot img');
+    const n = await imgs.count();
+    expect(n).toBeGreaterThanOrEqual(4);
+    for (let i = 0; i < n; i++) {
+      const img = imgs.nth(i);
+      await img.scrollIntoViewIfNeeded();
+      const m = await img.evaluate((el: HTMLImageElement) => ({
+        scale: el.getBoundingClientRect().width / el.naturalWidth,
+        scrollable: (el.parentElement as HTMLElement).scrollWidth > (el.parentElement as HTMLElement).clientWidth,
+        focusable: (el.parentElement as HTMLElement).tabIndex === 0,
+      }));
+      if (m.scale < 0.5) throw new Error(`screenshot ${i} scale ${m.scale.toFixed(2)} < 0.5`);
+      if (m.scrollable) expect(m.focusable).toBe(true);
+    }
+    const w = await page.evaluate(() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth }));
+    expect(w.s).toBe(w.c);
+  });
+});
