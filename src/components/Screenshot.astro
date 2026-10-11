@@ -1,0 +1,83 @@
+---
+import { site } from '../data/site';
+import type { Img } from '../data/site';
+
+interface Props {
+  image: Img;
+  eager?: boolean;
+  wide?: boolean;
+  narrow?: boolean;
+}
+const { image, eager = false, wide = false, narrow = false } = Astro.props;
+---
+
+<figure class:list={['shot', { 'shot--wide': wide, 'shot--narrow': narrow }]}>
+  <div class="shot__win">
+    <div class="shot__bar" aria-hidden="true">
+      <span class="shot__title">{site.imagery.windowTitle}</span>
+      <span class="shot__dots"><i></i><i></i><i></i></span>
+    </div>
+    <img
+      src={image.src}
+      alt={image.alt}
+      width={image.width}
+      height={image.height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </div>
+  {image.caption && <figcaption class="shot__caption">{image.caption}</figcaption>}
+</figure>
+
+<style>
+  .shot {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 760px;
+  }
+  .shot--narrow {
+    max-width: 628px;
+  }
+  .shot--wide {
+    max-width: 960px;
+  }
+  .shot__win {
+    overflow: hidden;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-mock);
+  }
+  .shot__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    padding-inline: var(--space-3);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+  }
+  .shot__dots {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .shot__dots i {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--text-subtle);
+    border-radius: 2px;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .shot__caption {
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+</style>

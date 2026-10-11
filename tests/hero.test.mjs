@@ -194,5 +194,7 @@ test('hero payload: HTML + CSS + JS under 150KB, no font or image files referenc
   const bytes = files.reduce((n, f) => n + statSync(new URL(f, dist)).size, 0);
   assert.ok(bytes < 150 * 1024, `${bytes} bytes`);
   const html = readFileSync(new URL('index.html', dist), 'utf8');
-  assert.doesNotMatch(html, /@font-face|<img[\s>]|fonts\.googleapis/);
+  assert.doesNotMatch(html, /@font-face|fonts\.googleapis/);
+  const heroHtml = html.slice(html.indexOf('id="hero"'), html.indexOf('id="how-it-works"'));
+  assert.doesNotMatch(heroHtml.replace(/<img[^>]*screenshots[^>]*>/g, ""), /<img[\s>]/);
 });

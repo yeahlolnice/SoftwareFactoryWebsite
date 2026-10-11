@@ -41,7 +41,7 @@ One page, `src/pages/index.astro`. Sections render in this order, each as `<sect
 - Tagline in `site.ts` (`tagline`) is used for `<meta name="description">` prefix, OG title and the footer; the H1 may differ from it.
 
 ### 2.2 Proof strip (`id="proof"`, optional, only if owner provides content)
-Hidden by default (`site.proof` empty array → section not rendered). If populated: one line "Built for people who ship" + up to 4 text stats/logos. Keep in the data model so content can be added without a code change.
+The section always renders the billing/cost screenshot (TASK-011). The text strip is hidden when `site.proof` is empty. If populated, the strip shows: one line "Built for people who ship" + up to 4 text stats/logos. Keep in the data model so content can be added without a code change.
 
 ### 2.3 How it works (`id="how-it-works"`)
 - Eyebrow: `How it works`
