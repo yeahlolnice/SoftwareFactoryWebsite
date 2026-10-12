@@ -19,10 +19,15 @@ test('every <img> has alt text, dimensions and lazy loading', () => {
     if (src?.startsWith('/images/')) {
       assert.ok((attr(tag, 'alt') ?? '').length > 10, `alt missing: ${src}`);
       assert.ok(attr(tag, 'width') && attr(tag, 'height'), `dimensions missing: ${src}`);
-      const want = src.endsWith('/overview.webp') ? 'eager' : 'lazy'; // hero image is above the fold
-      assert.equal(attr(tag, 'loading'), want, `wrong loading for ${src}`);
+      // the hero overview is above the fold (eager); its copy in the CTA showcase is lazy
+      const ok = src.endsWith('/overview.webp') ? ['eager', 'lazy'] : ['lazy'];
+      assert.ok(ok.includes(attr(tag, 'loading')), `wrong loading for ${src}`);
     }
   }
+});
+
+test('hero overview image is eager-loaded', () => {
+  assert.ok(imgs.some((i) => attr(i, 'src')?.endsWith('/overview.webp') && attr(i, 'loading') === 'eager'));
 });
 
 test('every local image file exists and is under 300KB', () => {

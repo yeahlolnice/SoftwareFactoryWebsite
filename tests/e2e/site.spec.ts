@@ -279,3 +279,72 @@ test.describe('screenshot legibility at 360px', () => {
     expect(w.s).toBe(w.c);
   });
 });
+
+test.describe('CTA screenshot showcase', () => {
+  const active = (page: Page) => page.locator('#tour .tour__slide[data-active="true"] img');
+
+  test('cycles through the 4 screenshots, pauses on hover and when offscreen, no CLS', async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.goto('/');
+    const tour = page.locator('#tour [data-tour]');
+    await tour.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    const box1 = await tour.boundingBox();
+    const seen = new Set<string>();
+    await expect(tour).not.toHaveAttribute('data-paused', '');
+    for (let i = 0; i < 5; i++) {
+      seen.add((await active(page).getAttribute('src')) ?? '');
+      await page.waitForFunction((s) => document.querySelector('#tour .tour__slide[data-active="true"] img')?.getAttribute('src') !== s, (await active(page).getAttribute('src')), { timeout: 8000 });
+    }
+    expect(seen.size).toBe(4);
+    expect((await tour.boundingBox())?.height).toBe(box1?.height);
+
+    await tour.hover();
+    await expect(tour).toHaveAttribute('data-paused', '');
+    const src = await active(page).getAttribute('src');
+    await page.waitForTimeout(5500);
+    expect(await active(page).getAttribute('src')).toBe(src);
+
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(tour).toHaveAttribute('data-paused', '');
+  });
+
+  test('manual controls change the slide', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#tour [data-next]').click();
+    await expect(active(page)).toHaveAttribute('src', /agent-chat/);
+    await page.locator('#tour [data-goto="3"]').click();
+    await expect(active(page)).toHaveAttribute('src', /roles/);
+  });
+
+  test('prefers-reduced-motion shows the static first frame with working controls', async ({ browser }) => {
+    const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    await page.goto('/');
+    await page.locator('#tour [data-tour]').scrollIntoViewIfNeeded();
+    const first = await active(page).getAttribute('src');
+    expect(first).toContain('overview');
+    await page.waitForTimeout(5500);
+    expect(await active(page).getAttribute('src')).toBe(first);
+    await page.locator('#tour [data-next]').click();
+    await expect(active(page)).toHaveAttribute('src', /agent-chat/);
+    await ctx.close();
+  });
+
+  test.describe('at 360px', () => {
+    test.use({ viewport: { width: 360, height: 800 } });
+    test('stage is a focusable scroll frame at readable scale, no page overflow', async ({ page }) => {
+      await page.goto('/');
+      const frame = page.locator('#tour .tour__scroll');
+      await frame.scrollIntoViewIfNeeded();
+      const m = await frame.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, tab: (el as HTMLElement).tabIndex }));
+      expect(m.sw).toBeGreaterThanOrEqual(800);
+      expect(m.tab).toBe(0);
+      const scale = await active(page).evaluate((el: HTMLImageElement) => el.getBoundingClientRect().width / el.naturalWidth);
+      expect(scale).toBeGreaterThanOrEqual(0.5);
+      const w = await page.evaluate(() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth }));
+      expect(w.s).toBe(w.c);
+    });
+  });
+});
