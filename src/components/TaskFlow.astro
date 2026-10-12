@@ -1,0 +1,350 @@
+---
+import { site } from '../data/site';
+
+const { flow } = site.features;
+// No inline style attributes (CSP style-src is self-only): colour, stagger and budget are data attributes mapped in CSS.
+---
+
+<figure class="flow-wrap">
+  <div class="flow" role="img" aria-label={flow.label}>
+    <div class="flow__inner" aria-hidden="true">
+      <div class="flow__plan">
+        <span class="flow__badge">{flow.plan.badge}</span>
+        <div>
+          <p class="flow__name">{flow.plan.title}</p>
+          <p class="flow__meta">{flow.plan.body}</p>
+        </div>
+      </div>
+
+      <span class="flow__link"></span>
+
+      <ul class="flow__tasks">
+        {
+          flow.tasks.map((task, i) => (
+            <li class="flow__task" data-color={task.color} data-i={i}>
+              <span class="flow__task-head">
+                <span class="flow__task-id">{task.id}</span>
+                <span class="flow__task-agent">{task.agent}</span>
+              </span>
+              <span class="flow__task-title">{task.title}</span>
+              <span class="flow__pills">
+                <span class="flow__pill flow__pill--backlog">{flow.states.backlog}</span>
+                <span class="flow__pill flow__pill--wip">{flow.states.inProgress}</span>
+                <span class="flow__pill flow__pill--done">{flow.states.done}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <span class="flow__link"></span>
+
+      <div class="flow__merge">
+        <ul class="flow__branches">
+          {flow.merge.branches.map((branch) => <li class="flow__branch">{branch}</li>)}
+        </ul>
+        <p class="flow__target">{flow.merge.target}</p>
+        <div class="flow__budget">
+          <p class="flow__budget-row">
+            <span>{flow.budget.label}</span>
+            <span>{flow.budget.value}</span>
+          </p>
+          <span class="flow__bar">
+            <span class="flow__fill" data-p={flow.budget.percent}></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption class="flow__caption">{flow.caption}</figcaption>
+</figure>
+
+<style>
+  .flow-wrap {
+    margin: 0;
+  }
+  .flow {
+    padding: var(--card-pad);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-mock);
+  }
+  .flow__caption {
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+  }
+  .flow__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .flow__plan,
+  .flow__task {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  /* Plan */
+  .flow__plan {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-raised);
+  }
+  .flow__badge {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--on-accent);
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+  }
+  .flow__name {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+  }
+  .flow__meta,
+  .flow__task-agent,
+  .flow__budget-row {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-xs);
+  }
+
+  /* Connectors */
+  .flow__link {
+    display: block;
+    flex: none;
+    width: 2px;
+    height: 1.5rem;
+    margin-inline: auto;
+    background-color: var(--border-control);
+    border-radius: 1px;
+  }
+
+  /* Tasks */
+  .flow__tasks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .flow__task {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border-left: 3px solid var(--task-color, var(--border-control));
+  }
+  .flow__task[data-color='accent'] { --task-color: var(--accent); }
+  .flow__task[data-color='violet'] { --task-color: var(--violet); }
+  .flow__task[data-color='info'] { --task-color: var(--info); }
+  .flow__task[data-color='warn'] { --task-color: var(--warn); }
+  .flow__task[data-color='danger'] { --task-color: var(--danger); }
+  .flow__task-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .flow__task-id {
+    color: var(--task-color, var(--text-muted));
+    font-weight: var(--weight-semibold);
+  }
+  .flow__task-title {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+  .flow__pills {
+    display: grid;
+    margin-top: var(--space-1);
+  }
+  .flow__pill {
+    grid-area: 1 / 1;
+    justify-self: start;
+    padding: 0.125rem var(--space-2);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-xs);
+  }
+  /* Static final frame: every task is Done. Backlog and In progress show only while animating. */
+  .flow__pill--backlog,
+  .flow__pill--wip {
+    visibility: hidden; /* hidden states leave the accessibility tree and contrast checks */
+  }
+  .flow__pill--backlog {
+    color: var(--text-muted);
+    background: var(--surface-overlay);
+  }
+  .flow__pill--wip {
+    color: var(--info);
+    background: color-mix(in srgb, var(--info) 14%, transparent);
+  }
+  .flow__pill--done {
+    color: var(--accent);
+    background: var(--accent-tint);
+  }
+
+  /* Merge */
+  .flow__merge {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .flow__branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .flow__branch {
+    padding: 0.125rem var(--space-2);
+    color: var(--text);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+  .flow__target {
+    align-self: flex-start;
+    padding: var(--space-2) var(--space-4);
+    color: var(--on-accent);
+    background: var(--accent);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+  }
+  .flow__budget {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .flow__budget-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .flow__bar {
+    display: block;
+    height: 0.5rem;
+    overflow: hidden;
+    background: var(--surface-overlay);
+    border-radius: var(--radius-pill);
+  }
+  .flow__fill {
+    --f: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--info), var(--violet));
+    transform: scaleX(var(--f));
+    transform-origin: left center;
+  }
+  /* One rule per budget percent in site.ts (flow.budget.percent). */
+  .flow__fill[data-p='50'] { --f: 0.5; }
+
+  @media (min-width: 768px) {
+    .flow__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.6fr) auto minmax(0, 1.2fr);
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .flow__link {
+      width: 2.5rem;
+      height: 2px;
+      margin-inline: 0;
+    }
+  }
+
+  /* Animation: CSS only, 9s loop. Runs only when reduced motion is not requested, so the
+     default and reduced-motion view is the complete static final frame above. */
+  @media (prefers-reduced-motion: no-preference) {
+    .flow__pill--backlog {
+      animation: flow-pill-backlog 9s linear infinite;
+    }
+    .flow__pill--wip {
+      animation: flow-pill-wip 9s linear infinite;
+    }
+    .flow__pill--done {
+      animation: flow-pill-done 9s linear infinite;
+    }
+    /* Stagger the three tasks so they are at different stages at any moment. */
+    .flow__task[data-i='1'] .flow__pill { animation-delay: -3s; }
+    .flow__task[data-i='2'] .flow__pill { animation-delay: -6s; }
+    .flow__fill {
+      animation: flow-fill 9s ease-in-out infinite;
+    }
+    .flow__target {
+      animation: flow-target 9s ease-out infinite;
+    }
+    .flow__plan {
+      animation: flow-plan 9s ease-in-out infinite;
+    }
+    /* Dashes flow down the vertical connectors on mobile... */
+    .flow__link {
+      background-color: transparent;
+      background-image: repeating-linear-gradient(to bottom, var(--accent) 0 6px, transparent 6px 12px);
+      background-size: 2px 12px;
+      animation: flow-run-y 0.8s linear infinite;
+    }
+  }
+
+  /* ...and across them from 768px up. */
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .flow__link {
+      background-image: repeating-linear-gradient(to right, var(--accent) 0 6px, transparent 6px 12px);
+      background-size: 12px 2px;
+      animation-name: flow-run-x;
+    }
+  }
+
+  /* Visibility switches discretely, never fading: text is never partly transparent, so contrast holds at every frame. */
+  @keyframes flow-pill-backlog {
+    0% { visibility: visible; }
+    10%, 100% { visibility: hidden; }
+  }
+  @keyframes flow-pill-wip {
+    0%, 9% { visibility: hidden; }
+    10%, 55% { visibility: visible; }
+    60%, 100% { visibility: hidden; }
+  }
+  @keyframes flow-pill-done {
+    0%, 59% { visibility: hidden; }
+    60%, 100% { visibility: visible; }
+  }
+  @keyframes flow-fill {
+    0% { transform: scaleX(0.08); }
+    70%, 100% { transform: scaleX(var(--f)); }
+  }
+  @keyframes flow-target {
+    0%, 70% { box-shadow: 0 0 0 0 var(--glow-accent); }
+    90%, 100% { box-shadow: 0 0 0 10px transparent; }
+  }
+  @keyframes flow-plan {
+    0%, 100% { border-color: var(--border); }
+    8% { border-color: var(--accent); }
+  }
+  @keyframes flow-run-y {
+    to { background-position: 0 12px; }
+  }
+  @keyframes flow-run-x {
+    to { background-position: 12px 0; }
+  }
+</style>
