@@ -15,6 +15,11 @@
 //     The hero overview is Softwarefactory-1.png with project names/path swapped for demo names (disclosed in its caption).
 //     The billing capture keeps real spend figures. TODO(PO): confirm they may be public. The blank-name project row is relabelled "Demo — Notes App" (label only; figures untouched).
 
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import sizzlerVtt from '../../public/video/sizzler.vtt?raw';
+
 export type Img = { src: string; width: number; height: number; alt: string; caption?: string };
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
 export type IconName =
@@ -218,6 +223,19 @@ const version = 'v0.0.0'; // TODO(PO)
 const platformNote = 'Windows 10/11, 64-bit'; // TODO(PO): confirm supported Windows versions
 const supportText = 'Contact details coming soon.'; // TODO(PO)
 
+// Sizzler media: the transcript is parsed from the rendered VTT so captions, transcript and JSON-LD never drift.
+function parseVtt(vtt: string): { start: number; end: number; text: string }[] {
+  const secs = (t: string) => t.split(':').reduce((acc, part) => acc * 60 + Number(part), 0);
+  return [...vtt.replace(/\r/g, '').matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})[^\n]*\n((?:.+\n?)+)/gm)].map(
+    ([, start, end, text]) => ({ start: secs(start), end: secs(end), text: text.trim().replace(/\n/g, ' ') }),
+  );
+}
+
+function versioned(path: string): string {
+  const hash = createHash('sha256').update(readFileSync(join(process.cwd(), 'public', path))).digest('hex').slice(0, 10);
+  return `${path}?v=${hash}`;
+}
+
 export const site: Site = {
   productName,
   companyName: 'Software Factory', // TODO(PO)
@@ -373,40 +391,27 @@ export const site: Site = {
     ],
   },
 
-  // TODO(PO): the files in public/video are placeholders (scripts/sizzler-placeholder.mjs) until the final render lands; keep paths stable.
   sizzler: {
     eyebrow: 'Watch',
     heading: 'See a whole team ship in 40 seconds',
     lead: 'One goal goes in; a planned, built, reviewed and merged project comes out.',
     title: `${productName}: one goal, a whole team`,
     description: `A 40-second tour of ${productName}: a project manager agent breaks your goal into tasks, role agents work in parallel on their own branches, and you approve every merge within your budget.`,
-    uploadDate: '2026-10-12', // TODO(PO): set to the publish date of the final render
-    duration: 'PT40S',
-    width: 1280,
-    height: 720,
-    poster: '/video/sizzler-poster.webp',
+    uploadDate: '2026-10-12', // TODO(PO): confirm the public launch date of the video
+    duration: 'PT40S', // ffprobe: 40.0 s, 1200 frames at 30 fps
+    width: 1920,
+    height: 1080,
+    // ?v= is a content hash, so the year-long cache in nginx.conf is safe across re-renders.
+    poster: versioned('/video/sizzler-poster.webp'),
     sources: [
-      { src: '/video/sizzler.webm', type: 'video/webm' },
-      { src: '/video/sizzler.mp4', type: 'video/mp4' },
+      { src: versioned('/video/sizzler.webm'), type: 'video/webm' },
+      { src: versioned('/video/sizzler.mp4'), type: 'video/mp4' },
     ],
-    captions: { src: '/video/sizzler.en.vtt', srclang: 'en', label: 'English' },
+    // Single caption source: the VTT written by `npm run render:sizzler` (tools/sizzler) with the real cue timings.
+    captions: { src: '/video/sizzler.vtt', srclang: 'en', label: 'English' },
     playLabel: 'Play the 40-second video',
     transcriptLabel: 'Read the video transcript',
-    // Timings follow docs/sizzler-storyboard.md section 5; text is the on-screen copy from section 6.
-    cues: [
-      { start: 0.4, end: 3.0, text: 'One prompt. Then another.' },
-      { start: 3.0, end: 5.0, text: 'Then chaos. Solo AI prompting doesn’t scale.' },
-      { start: 5.9, end: 9.0, text: `${productName}. Manage a team of AI agents.` },
-      { start: 9.4, end: 11.0, text: 'Give it a goal.' },
-      { start: 11.3, end: 15.0, text: 'The PM breaks it into tasks. Plans, assigns, tracks. Automatically.' },
-      { start: 15.4, end: 18.0, text: 'Designer. Frontend. DevOps. QA. SEO.' },
-      { start: 18.0, end: 23.0, text: 'All at once. Each agent owns a role, and works in parallel.' },
-      { start: 23.0, end: 25.6, text: 'A branch for every task.' },
-      { start: 25.6, end: 28.3, text: 'You approve every merge.' },
-      { start: 28.3, end: 31.0, text: 'Your budget. Your cap.' },
-      { start: 31.4, end: 36.0, text: 'Merged. Shipped. A whole project, finished by a team.' },
-      { start: 36.2, end: 40.0, text: `Your AI team is ready. Download for Windows. ${platformNote}.` },
-    ],
+    cues: parseVtt(sizzlerVtt),
   },
   proof: [],
   imagery: {

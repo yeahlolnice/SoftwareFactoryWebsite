@@ -1,0 +1,79 @@
+/* Sizzler scene styles. Hex values mirror src/styles/tokens.css (see docs/sizzler-storyboard.md section 3). */
+:root {
+  --bg-deep: #080b0f;
+  --bg: #0b0f14;
+  --surface: #121820;
+  --surface-raised: #1a222d;
+  --border: #2a3441;
+  --text: #e6edf3;
+  --text-muted: #9aa7b5;
+  --accent: #3ddc97;
+  --accent-tint: #0f2a21;
+  --on-accent: #06130d;
+  --info: #5cb8ff;
+  --warn: #f5b544;
+  --danger: #ff6b6b;
+  --violet: #a78bfa;
+  --glow-accent: color-mix(in srgb, var(--accent) 12%, transparent);
+  --grid-line: color-mix(in srgb, #fff 4%, transparent);
+  --shadow-mock: 0 40px 80px -20px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.03);
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg-deep); }
+body { font-family: var(--font-sans); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+#stage div, #stage svg, #stage img { position: absolute; }
+#stage span { display: inline-block; white-space: pre; }
+#stage img { display: block; max-width: none; }
+
+/* Background layers */
+.bg-grid {
+  inset: -96px; background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 96px 96px;
+}
+.bg-glow { left: 384px; top: 108px; width: 1152px; height: 864px; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow-accent), transparent); transform: scale(1.6); }
+.bg-vignette { inset: 0; background: radial-gradient(ellipse 75% 75% at 50% 50%, transparent 55%, var(--bg-deep) 100%); }
+.fill { inset: 0; }
+
+.scene, .cam, .layer { left: 0; top: 0; width: 1920px; height: 1080px; }
+
+/* Type styles (storyboard section 3, px at 1080p) */
+.display, .headline { text-shadow: 0 4px 32px rgb(8 11 15 / 0.85); }
+.display { font-size: 128px; line-height: 1.08; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.headline { font-size: 80px; line-height: 1.15; font-weight: 600; letter-spacing: -0.015em; white-space: nowrap; }
+.caption { font-size: 40px; line-height: 1.4; font-weight: 500; }
+.label { font-family: var(--font-mono); font-size: 28px; line-height: 1.4; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; }
+.mono { font-family: var(--font-mono); white-space: nowrap; }
+.muted { color: var(--text-muted); }
+.centered { left: 0; width: 1920px; text-align: center; }
+
+.caption-wrap { left: 0; width: 1920px; bottom: 96px; text-align: center; }
+.caption-wrap .caption { position: relative; display: inline-block; padding: 8px 28px; border-radius: 14px;
+  background: rgb(11 15 20 / 0.78); color: var(--text); white-space: pre; }
+
+/* UI pieces */
+.win { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow-mock); overflow: hidden; }
+.win-bar { left: 0; top: 0; right: 0; height: 40px; border-bottom: 1px solid var(--border); background: var(--surface-raised); }
+.win-bar i { position: absolute; top: 14px; width: 12px; height: 12px; border-radius: 50%; background: var(--border); }
+.win-title { left: 0; right: 0; top: 7px; text-align: center; font-family: var(--font-mono); font-size: 18px; color: var(--text-muted); }
+.crop { overflow: hidden; }
+
+.card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-mock); }
+.card-raised { background: var(--surface-raised); border: 1.5px solid var(--border); border-radius: 18px; }
+.bar { height: 14px; border-radius: 7px; background: var(--border); }
+.badge { font-family: var(--font-mono); font-size: 20px; font-weight: 600; padding: 4px 14px; border-radius: 999px; white-space: nowrap; }
+.chip { font-family: var(--font-mono); font-size: 20px; padding: 6px 16px 6px 34px; border-radius: 999px;
+  background: var(--surface-raised); border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; }
+.chip i { position: absolute; left: 14px; top: 15px; width: 10px; height: 10px; border-radius: 50%; }
+.avatar { border-radius: 50%; background: var(--surface-raised); border: 3px solid var(--border);
+  font-family: var(--font-mono); font-weight: 700; text-align: center; }
+.ring { border-radius: 50%; border: 3px solid currentColor; }
+.btn { border-radius: 999px; font-weight: 600; white-space: nowrap; text-align: center; overflow: hidden; }
+.cursor { width: 40px; height: 40px; }

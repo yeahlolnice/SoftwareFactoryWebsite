@@ -134,7 +134,7 @@ test('sizzler video is poster-first with captions and a visible transcript', () 
   const track = html.match(/<track\b[^>]*>/)?.[0] ?? '';
   assert.match(track, /kind="captions"/);
   const vttPath = track.match(/src="([^"]+)"/)[1];
-  const vtt = read(`dist${vttPath}`);
+  const vtt = read(`dist${vttPath}`).replace(/\r\n/g, '\n'); // tolerate core.autocrlf checkouts
   assert.match(vtt, /^WEBVTT\n/);
   const cues = [...vtt.matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})\n(.+)$/gm)];
   assert.ok(cues.length >= 7, 'too few caption cues');
