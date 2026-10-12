@@ -63,6 +63,10 @@
   stroke: var(--text-muted);
   stroke-width: 1;
 }
+/* Owner-chosen caption-button colours (6f69ba2), kept in CSS because style-src is 'self' only. */
+.am-caption-btns svg:nth-child(1) { stroke: goldenrod; }
+.am-caption-btns svg:nth-child(2) { stroke: forestgreen; }
+.am-caption-btns svg:nth-child(3) { stroke: indianred; }
 
 .am-led {
   display: inline-block;

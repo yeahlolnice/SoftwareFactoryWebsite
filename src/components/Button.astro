@@ -3,7 +3,8 @@ import type { IconName } from '../data/site';
 import Icon from './Icon.astro';
 
 interface Props {
-  href: string;
+  /** Omit to render a <button type="button"> for in-page actions. */
+  href?: string;
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'md' | 'lg';
   icon?: IconName;
@@ -25,16 +26,25 @@ const {
 } = Astro.props;
 ---
 
-<a
-  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
-  href={href}
-  rel={external ? 'noopener' : undefined}
-  download={download ? '' : undefined}
-  data-cta={cta}
->
-  {icon && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
-  <span><slot /></span>
-</a>
+{
+  href ? (
+    <a
+      class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+      href={href}
+      rel={external ? 'noopener' : undefined}
+      download={download ? '' : undefined}
+      data-cta={cta}
+    >
+      {icon && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
+      <span><slot /></span>
+    </a>
+  ) : (
+    <button type="button" class:list={['btn', `btn--${variant}`, `btn--${size}`, className]} data-cta={cta}>
+      {icon && <Icon name={icon} size={size === 'lg' ? 24 : 20} />}
+      <span><slot /></span>
+    </button>
+  )
+}
 
 <style>
   .btn {
@@ -50,6 +60,7 @@ const {
     font-weight: var(--weight-semibold);
     line-height: 1.2;
     text-decoration: none;
+    cursor: pointer;
     transition:
       background-color var(--dur-fast) var(--ease),
       color var(--dur-fast) var(--ease),

@@ -37,3 +37,20 @@ test('built pages have no inline styles (style-src is self-only)', () => {
     assert.doesNotMatch(html, / style="/, `${page} contains a style attribute`);
   }
 });
+
+test('CSP allows same-origin media for the sizzler video', () => {
+  assert.match(csp, /media-src 'self'(;|$)/);
+});
+
+test('nginx serves video with MIME types, Range support and long cache headers', () => {
+  // stock nginx mime.types maps mp4 and webm; vtt must be added
+  assert.match(nginxConf, /include \/etc\/nginx\/mime\.types;/);
+  assert.match(nginxConf, /types\s*{\s*text\/vtt\s+vtt;\s*}/);
+  const video = nginxConf.match(/location \/video\/ {([^}]*)}/)?.[1] ?? '';
+  assert.ok(video, 'location /video/ missing');
+  assert.doesNotMatch(video, /max_ranges 0/, 'Range requests must stay enabled');
+  assert.match(video, /max_ranges 1;/);
+  assert.doesNotMatch(video, /add_header/, 'add_header in a location would drop the server-level security headers');
+  assert.match(nginxConf, /~\^\/video\/\.\+\\\.\(mp4\|webm\|webp\)\$\s+"public, max-age=31536000"/);
+  assert.doesNotMatch(nginxConf.match(/gzip_types[^;]*;/)[0], /video\//, 'do not gzip video');
+});

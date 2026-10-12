@@ -35,6 +35,25 @@ export const faqPageLd = {
   })),
 };
 
+const { sizzler } = site;
+
+export const videoObjectLd = {
+  '@context': context,
+  '@type': 'VideoObject',
+  name: sizzler.title,
+  description: sizzler.description,
+  thumbnailUrl: [absoluteUrl(sizzler.poster)],
+  uploadDate: sizzler.uploadDate,
+  duration: sizzler.duration,
+  contentUrl: absoluteUrl(sizzler.sources.find((s) => s.type === 'video/mp4')!.src),
+  encodingFormat: 'video/mp4',
+  width: sizzler.width,
+  height: sizzler.height,
+  inLanguage: site.locale,
+  transcript: sizzler.cues.map((c) => c.text).join(' '),
+  publisher: { '@type': 'Organization', name: site.companyName, url: site.siteUrl },
+};
+
 export function jsonLd(data: object): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
