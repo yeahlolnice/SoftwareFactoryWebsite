@@ -408,7 +408,7 @@ test.describe('sizzler video', () => {
     await play.focus();
     await page.keyboard.press('Enter');
     await expect.poll(async () => (await state(page)).paused, { timeout: 8000 }).toBe(false);
-    expect(await state(page)).toMatchObject({ controls: true, loop: false, captions: 'showing' });
+    expect(await state(page)).toMatchObject({ controls: true, loop: false, muted: false, captions: 'showing' });
     await expect(play).toBeHidden();
     await expect(page.locator('#video video')).toBeFocused();
   });

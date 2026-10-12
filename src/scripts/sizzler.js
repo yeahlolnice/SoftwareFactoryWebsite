@@ -28,7 +28,7 @@
   };
   var start = function (auto) {
     autoplaying = auto;
-    video.muted = true;
+    video.muted = auto; // autoplay must be muted; an explicit Play has sound
     video.loop = auto;
     video.controls = true;
     setState('playing');
