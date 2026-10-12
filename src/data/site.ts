@@ -123,6 +123,17 @@ export interface Site {
     };
     caption: string;
   };
+  showcase: {
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    label: string;
+    pauseLabel: string;
+    playLabel: string;
+    prevLabel: string;
+    nextLabel: string;
+    slides: { key: 'overview' | 'agentChat' | 'billing' | 'roles'; title: string }[];
+  };
   proof: { text: string; href?: string }[];
   imagery: {
     windowTitle: string;
@@ -316,6 +327,23 @@ export const site: Site = {
       agentsOnline: '5 agents online',
     },
     caption: `Illustration of the ${productName} app: an agent team panel on the left, a task board in the middle and a live activity log on the right, showing agents handing tasks from planning through to testing.`,
+  },
+
+  showcase: {
+    eyebrow: 'See it work',
+    heading: 'Four screens, one team of agents',
+    lead: 'A quick tour of the app: your project, your team in chat, what it costs and the roles you can hire.',
+    label: 'App screenshot tour',
+    pauseLabel: 'Pause tour',
+    playLabel: 'Play tour',
+    prevLabel: 'Previous screenshot',
+    nextLabel: 'Next screenshot',
+    slides: [
+      { key: 'overview', title: 'Overview' },
+      { key: 'agentChat', title: 'Agent chat' },
+      { key: 'billing', title: 'Cost control' },
+      { key: 'roles', title: 'Roles' },
+    ],
   },
 
   proof: [],
