@@ -35,6 +35,16 @@ export interface AgentRole {
   icon: IconName;
 }
 export interface FaqItem { id: string; question: string; answer: string }
+export interface FlowTask { id: string; title: string; agent: string; color: RoleColor }
+export interface TaskFlow {
+  label: string; // accessible name of the animated graphic
+  caption: string; // visible text under the graphic
+  plan: { badge: string; title: string; body: string };
+  states: { backlog: string; inProgress: string; done: string };
+  tasks: FlowTask[];
+  merge: { branches: string[]; target: string };
+  budget: { label: string; value: string; percent: number }; // percent must have a rule in TaskFlow.astro
+}
 export interface MockAgent {
   name: string;
   role: string;
@@ -135,7 +145,7 @@ export interface Site {
     teamDiagram: Img;
   };
   howItWorks: { eyebrow: string; title: string; lead: string; cta: Link; steps: Step[] };
-  features: { eyebrow: string; title: string; lead: string; closing: Link; items: Feature[] };
+  features: { eyebrow: string; title: string; lead: string; closing: Link; items: Feature[]; flow: TaskFlow };
   team: { eyebrow: string; title: string; lead: string; cta: Cta; roles: AgentRole[]; handoff: string[] };
   faq: { eyebrow: string; title: string; items: FaqItem[] };
   layout: {
@@ -368,6 +378,19 @@ export const site: Site = {
     title: 'Everything you need to run an AI team',
     lead: 'One desktop app. No glue scripts, no tab-juggling between assistants.',
     closing: { label: 'Meet the agent roles', href: '#team' },
+    flow: {
+      label: 'Animated diagram: the Project Manager plans three tasks, the Designer, Frontend and QA agents each take one on its own branch, the branches merge into main, and the budget meter fills as the work goes.', // TODO(PO): confirm
+      caption: 'Illustrative demo figures. Each agent works on its own branch, and the budget tracks spend as the work merges.', // TODO(PO): confirm
+      plan: { badge: 'PM', title: 'Project Manager', body: 'Plans 3 tasks' },
+      states: { backlog: 'Backlog', inProgress: 'In progress', done: 'Done' },
+      tasks: [
+        { id: '#01', title: 'Landing page copy', agent: 'Designer', color: 'violet' },
+        { id: '#02', title: 'Pricing table', agent: 'Frontend', color: 'info' },
+        { id: '#03', title: 'Contact form tests', agent: 'QA', color: 'accent' },
+      ],
+      merge: { branches: ['task/01', 'task/02', 'task/03'], target: 'main' },
+      budget: { label: 'Budget', value: '$2.50 of $5.00', percent: 50 },
+    },
     items: [
       {
         id: 'agent-orchestration',

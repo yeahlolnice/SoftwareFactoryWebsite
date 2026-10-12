@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import Screenshot from './Screenshot.astro';
 import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
+import TaskFlow from './TaskFlow.astro';
 
 const { features } = site;
 ---
@@ -24,6 +25,7 @@ const { features } = site;
       }
     </ul>
     <div class="showcase section__body">
+      <TaskFlow />
       <Screenshot image={site.imagery.tasksBoard} wide />
     </div>
     <p class="section__cta">

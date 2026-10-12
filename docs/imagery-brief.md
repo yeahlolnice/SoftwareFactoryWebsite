@@ -25,6 +25,7 @@ Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#12
 | IMG-09 | Feature: approval gates | "A checkpoint gate with a tick that work must pass." | Features | `features/approval-gates.svg` |
 | IMG-10 | Feature: sandboxed execution | "A dashed boundary containing a terminal prompt." | Features | `features/sandboxed-execution.svg` |
 | IMG-11 | Feature: git branch per task | "A main line with task branches merging back." | Features | `features/branch-per-task.svg` |
+| IMG-14 | Animated task flow (TASK-020) | "Animated diagram: the Project Manager plans three tasks, the Designer, Frontend and QA agents each take one on its own branch, the branches merge into main, and the budget meter fills as the work goes." | Features | `src/components/TaskFlow.astro` (HTML/CSS, no image file) |
 | IMG-13 | Social card | "Software Factory: run a whole team of AI agents." | Meta | `public/og.png` (1200x630), source `public/images/og-source.svg` |
 
 ## Slot table: framed screenshot vs illustration
@@ -32,11 +33,22 @@ Design language: `src/styles/tokens.css` (dark surfaces `#080b0f`/`#0b0f14`/`#12
 | Section | Framed real screenshot (AppMock Windows frame) | Illustration kept |
 |---|---|---|
 | Hero | IMG-S1 (replaces/complements the animated AppMock) | none |
-| Features | IMG-S3 (budget control spotlight) | IMG-06 to IMG-11 icons |
+| Features | IMG-S3 (budget control spotlight) | IMG-06 to IMG-11 icons; IMG-14 animated task flow above the screenshot |
 | HowItWorks | IMG-S2 | IMG-03 flow graphic |
 | AgentRoles | IMG-S4 | IMG-04 team diagram |
 | Proof | IMG-S1 (a cropped second view) or IMG-S3 | none |
 | Meta | none | IMG-13 og card |
+
+## Animated graphic: task flow (IMG-14)
+
+`src/components/TaskFlow.astro` is an animated, text-based diagram of the agent team at work, shown in the Features section above the tasks-board screenshot. It is built from HTML and CSS keyframes, with no image file and no JavaScript. Copy and demo figures live in `site.features.flow` in `src/data/site.ts`.
+
+- **Content:** the Project Manager plans three tasks; the Designer, Frontend and QA agents each take one; each task moves from Backlog to In progress to Done; each task has its own branch (`task/01` to `task/03`), which merges into `main`; a budget meter fills to $2.50 of $5.00.
+- **Demo data only:** task titles, agent role names and figures are invented for illustration. No project names, paths, users or keys. The caption says the figures are illustrative.
+- **Accessibility:** the container is `role="img"` with an `aria-label` that describes the whole flow. The inner markup is `aria-hidden`, and a visible caption sits under the graphic.
+- **Motion:** a 9-second loop of CSS keyframes, applied only under `prefers-reduced-motion: no-preference`. With reduced motion, or without animation, the page shows the complete final frame: every task Done, the branches merged and the budget bar at its final value.
+- **Layout:** a three-column flow from 768px up, and a vertical stack below that. It has no fixed-width scaling, so text stays at 12px or larger at 360px.
+- **Tests:** `tests/task-flow.test.mjs` checks the accessible name, the caption, no horizontal overflow at 360px and 1280px, the reduced-motion final frame with zero running animations, and that the animation runs by default.
 
 ## Social card (OG / Twitter, IMG-13)
 
