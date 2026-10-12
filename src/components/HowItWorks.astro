@@ -1,6 +1,5 @@
 ---
 import { site } from '../data/site';
-import Screenshot from './Screenshot.astro';
 import Icon from './Icon.astro';
 import SectionHeader from './SectionHeader.astro';
 
@@ -26,10 +25,6 @@ const { howItWorks } = site;
         ))
       }
     </ol>
-    <div class="showcase section__body">
-      <img class="showcase__flow" src={site.imagery.flow.src} width={site.imagery.flow.width} height={site.imagery.flow.height} loading="lazy" decoding="async" alt={site.imagery.flow.alt} />
-      <Screenshot image={site.imagery.agentChat} narrow />
-    </div>
     <p class="section__cta">
       <a class="text-link" href={howItWorks.cta.href}>
         {howItWorks.cta.label}
@@ -40,16 +35,6 @@ const { howItWorks } = site;
 </section>
 
 <style>
-  .showcase {
-    display: grid;
-    gap: var(--space-8);
-  }
-  .showcase__flow {
-    width: 100%;
-    max-width: 720px;
-    height: auto;
-    margin-inline: auto;
-  }
   .steps {
     display: grid;
     gap: var(--grid-gap);

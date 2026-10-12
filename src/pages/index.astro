@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import Proof from '../components/Proof.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import Features from '../components/Features.astro';
 import AgentRoles from '../components/AgentRoles.astro';
@@ -15,7 +14,6 @@ import { faqPageLd, jsonLd, softwareApplicationLd } from '../data/structured-dat
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(softwareApplicationLd)} />
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(faqPageLd)} />
   <Hero />
-  <Proof />
   <HowItWorks />
   <Features />
   <AgentRoles />

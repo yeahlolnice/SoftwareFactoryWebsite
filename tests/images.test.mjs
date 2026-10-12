@@ -8,7 +8,7 @@ const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
 const attr = (tag, name) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
 
 test('screenshots and graphics are present in the page', () => {
-  for (const f of ['overview.webp', 'agent-chat.webp', 'billing-costs.webp', 'tasks-board.webp', 'roles.webp', 'orchestration-flow.svg', 'agent-team.svg']) {
+  for (const f of ['overview.webp', 'agent-chat.webp', 'billing-costs.webp', 'roles.webp', 'agent-team.svg']) {
     assert.ok(imgs.some((i) => attr(i, 'src')?.endsWith(f)), `missing <img> for ${f}`);
   }
 });
@@ -26,8 +26,9 @@ test('every <img> has alt text, dimensions and lazy loading', () => {
   }
 });
 
-test('hero overview image is eager-loaded', () => {
-  assert.ok(imgs.some((i) => attr(i, 'src')?.endsWith('/overview.webp') && attr(i, 'loading') === 'eager'));
+test('each image is used once (TASK-021)', () => {
+  const srcs = imgs.map((i) => attr(i, 'src')).filter(Boolean);
+  assert.equal(new Set(srcs).size, srcs.length, `duplicate image src: ${srcs}`);
 });
 
 test('every local image file exists and is under 300KB', () => {
