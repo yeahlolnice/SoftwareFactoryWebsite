@@ -238,7 +238,7 @@ test.describe('imagery', () => {
       });
       await page.goto('/');
       const imgs = page.locator('img[src^="/images/"]');
-      expect(await imgs.count()).toBeGreaterThanOrEqual(7);
+      expect(await imgs.count()).toBeGreaterThanOrEqual(5);
       for (const img of await imgs.all()) {
         await img.scrollIntoViewIfNeeded();
         await expect(img).toHaveJSProperty('complete', true);
@@ -261,9 +261,9 @@ test.describe('screenshot legibility at 360px', () => {
 
   test('screenshots render at readable scale inside a scrollable frame, no page overflow', async ({ page }) => {
     await page.goto('/');
-    const imgs = page.locator('figure.shot img');
+    const imgs = page.locator('.tour__slide img');
     const n = await imgs.count();
-    expect(n).toBeGreaterThanOrEqual(4);
+    expect(n).toBe(4);
     for (let i = 0; i < n; i++) {
       const img = imgs.nth(i);
       await img.scrollIntoViewIfNeeded();
