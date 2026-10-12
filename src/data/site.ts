@@ -13,7 +13,7 @@
 //   - features.items (marked TODO(PO)): confirm the six feature claims
 //   - screenshots: redacted captures live in public/images/screenshots (see docs/imagery-brief.md); all alt text and captions are in `imagery`.
 //     The hero overview is Softwarefactory-1.png with project names/path swapped for demo names (disclosed in its caption).
-//     The billing capture keeps real spend figures. TODO(PO): confirm they may be public.
+//     The billing capture keeps real spend figures. TODO(PO): confirm they may be public. The blank-name project row is relabelled "Demo — Notes App" (label only; figures untouched).
 
 export type Img = { src: string; width: number; height: number; alt: string; caption?: string };
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
