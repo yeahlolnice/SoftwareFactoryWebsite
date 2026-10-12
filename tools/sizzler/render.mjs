@@ -91,9 +91,9 @@ async function full() {
 
   // VP9 fallback: constant quality, raised until it is within the 5 MB target.
   const webm = join(OUT, 'sizzler.webm');
-  for (let crf = 34; ; crf += 4) {
+  for (let crf = 38; ; crf += 4) {
     ffmpegRun(ffmpeg, [...input, '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(crf), '-row-mt', '1',
-      '-deadline', 'good', '-cpu-used', '2', '-g', '120', ...common, webm]);
+      '-tile-columns', '2', '-threads', '8', '-deadline', 'good', '-cpu-used', '4', '-g', '120', ...common, webm]);
     const size = statSync(webm).size;
     console.log(`webm crf ${crf}: ${(size / 1048576).toFixed(2)} MB`);
     if (size <= WEBM_TARGET || crf >= 50) break;
