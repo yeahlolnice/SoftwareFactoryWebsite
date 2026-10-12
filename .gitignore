@@ -9,3 +9,6 @@ __pycache__/
 test-results/
 playwright-report/
 .astro/
+tools/sizzler/.bin/
+tools/sizzler/.frames/
+tools/sizzler/.stills/
