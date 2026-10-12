@@ -105,3 +105,38 @@ test('sitemap.xml lists the home page', () => {
   assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
   assert.match(sitemap, /<loc>https?:\/\/[^<]+\/<\/loc>/);
 });
+
+test('VideoObject JSON-LD is valid and points at files in dist', () => {
+  const video = ldBlocks().find((b) => b['@type'] === 'VideoObject');
+  assert.ok(video, 'VideoObject JSON-LD missing');
+  assert.equal(video['@context'], 'https://schema.org');
+  // Google's required properties for video rich results
+  for (const key of ['name', 'description', 'thumbnailUrl', 'uploadDate']) assert.ok(video[key], `missing ${key}`);
+  assert.match(video.uploadDate, /^\d{4}-\d{2}-\d{2}/);
+  assert.match(video.duration, /^PT(\d+M)?\d+S$/);
+  assert.ok(video.contentUrl, 'contentUrl missing');
+  for (const url of [...video.thumbnailUrl, video.contentUrl]) {
+    assert.ok(existsSync(new URL(`dist${new URL(url).pathname}`, root)), `VideoObject file missing from dist: ${url}`);
+  }
+  assert.ok(video.transcript.length > 100, 'transcript missing');
+});
+
+test('sizzler video is poster-first with captions and a visible transcript', () => {
+  const tag = html.match(/<video\b[^>]*>/)?.[0] ?? '';
+  assert.ok(tag, '<video> missing');
+  assert.match(tag, /\spreload="none"/);
+  assert.match(tag, /\sposter="\/video\/[^"]+"/);
+  assert.match(tag, /\smuted\b/);
+  assert.match(tag, /\splaysinline\b/);
+  assert.match(tag, /\swidth="\d+"/);
+  assert.match(tag, /\sheight="\d+"/);
+  assert.doesNotMatch(tag, /\sautoplay\b/, 'autoplay is decided in JS (in view, no reduced motion)');
+  const track = html.match(/<track\b[^>]*>/)?.[0] ?? '';
+  assert.match(track, /kind="captions"/);
+  const vttPath = track.match(/src="([^"]+)"/)[1];
+  const vtt = read(`dist${vttPath}`).replace(/\r\n/g, '\n'); // tolerate core.autocrlf checkouts
+  assert.match(vtt, /^WEBVTT\n/);
+  const cues = [...vtt.matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})\n(.+)$/gm)];
+  assert.ok(cues.length >= 7, 'too few caption cues');
+  for (const [, , , text] of cues) assert.ok(html.includes(escapeHtml(text)), `cue not in visible transcript: ${text}`);
+});

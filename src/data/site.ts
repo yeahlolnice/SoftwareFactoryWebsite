@@ -15,12 +15,17 @@
 //     The hero overview is Softwarefactory-1.png with project names/path swapped for demo names (disclosed in its caption).
 //     The billing capture keeps real spend figures. TODO(PO): confirm they may be public. The blank-name project row is relabelled "Demo — Notes App" (label only; figures untouched).
 
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import sizzlerVtt from '../../public/video/sizzler.vtt?raw';
+
 export type Img = { src: string; width: number; height: number; alt: string; caption?: string };
 export type RoleColor = 'accent' | 'violet' | 'info' | 'warn' | 'danger';
 export type IconName =
   | 'users' | 'board' | 'terminal' | 'branch' | 'shield-check' | 'steer'
   | 'plan' | 'palette' | 'code' | 'server' | 'cloud' | 'bug' | 'search'
-  | 'windows' | 'download' | 'chevron-down' | 'menu' | 'close' | 'check' | 'arrow-right';
+  | 'windows' | 'download' | 'chevron-down' | 'menu' | 'close' | 'check' | 'arrow-right' | 'play';
 
 export interface Link { label: string; href: string }
 export interface Cta { label: string; href: string; icon?: IconName; external?: boolean }
@@ -144,6 +149,23 @@ export interface Site {
     nextLabel: string;
     slides: { key: 'overview' | 'agentChat' | 'billing' | 'roles'; title: string }[];
   };
+  sizzler: {
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    title: string;
+    description: string;
+    uploadDate: string;
+    duration: string;
+    width: number;
+    height: number;
+    poster: string;
+    sources: { src: string; type: string }[];
+    captions: { src: string; srclang: string; label: string };
+    playLabel: string;
+    transcriptLabel: string;
+    cues: { start: number; end: number; text: string }[];
+  };
   proof: { text: string; href?: string }[];
   imagery: {
     windowTitle: string;
@@ -200,6 +222,19 @@ const downloadUrl = 'https://example.com/downloads/software-factory-setup.exe'; 
 const version = 'v0.0.0'; // TODO(PO)
 const platformNote = 'Windows 10/11, 64-bit'; // TODO(PO): confirm supported Windows versions
 const supportText = 'Contact details coming soon.'; // TODO(PO)
+
+// Sizzler media: the transcript is parsed from the rendered VTT so captions, transcript and JSON-LD never drift.
+function parseVtt(vtt: string): { start: number; end: number; text: string }[] {
+  const secs = (t: string) => t.split(':').reduce((acc, part) => acc * 60 + Number(part), 0);
+  return [...vtt.replace(/\r/g, '').matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})[^\n]*\n((?:.+\n?)+)/gm)].map(
+    ([, start, end, text]) => ({ start: secs(start), end: secs(end), text: text.trim().replace(/\n/g, ' ') }),
+  );
+}
+
+function versioned(path: string): string {
+  const hash = createHash('sha256').update(readFileSync(join(process.cwd(), 'public', path))).digest('hex').slice(0, 10);
+  return `${path}?v=${hash}`;
+}
 
 export const site: Site = {
   productName,
@@ -356,6 +391,28 @@ export const site: Site = {
     ],
   },
 
+  sizzler: {
+    eyebrow: 'Watch',
+    heading: 'See a whole team ship in 40 seconds',
+    lead: 'One goal goes in; a planned, built, reviewed and merged project comes out.',
+    title: `${productName}: one goal, a whole team`,
+    description: `A 40-second tour of ${productName}: a project manager agent breaks your goal into tasks, role agents work in parallel on their own branches, and you approve every merge within your budget.`,
+    uploadDate: '2026-10-12', // TODO(PO): confirm the public launch date of the video
+    duration: 'PT40S', // ffprobe: 40.0 s, 1200 frames at 30 fps
+    width: 1920,
+    height: 1080,
+    // ?v= is a content hash, so the year-long cache in nginx.conf is safe across re-renders.
+    poster: versioned('/video/sizzler-poster.webp'),
+    sources: [
+      { src: versioned('/video/sizzler.webm'), type: 'video/webm' },
+      { src: versioned('/video/sizzler.mp4'), type: 'video/mp4' },
+    ],
+    // Single caption source: the VTT written by `npm run render:sizzler` (tools/sizzler) with the real cue timings.
+    captions: { src: '/video/sizzler.vtt', srclang: 'en', label: 'English' },
+    playLabel: 'Play the 40-second video',
+    transcriptLabel: 'Read the video transcript',
+    cues: parseVtt(sizzlerVtt),
+  },
   proof: [],
   imagery: {
     windowTitle: 'AI Software Factory',

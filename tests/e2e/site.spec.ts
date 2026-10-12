@@ -348,3 +348,92 @@ test.describe('CTA screenshot showcase', () => {
     });
   });
 });
+
+test.describe('sizzler video', () => {
+  const isMedia = (url: string) => /\/video\/[^/]+\.(mp4|webm)(\?|$)/.test(url);
+  const state = (page: Page) =>
+    page.locator('#video video').evaluate((v: HTMLVideoElement) => ({
+      paused: v.paused,
+      muted: v.muted,
+      loop: v.loop,
+      controls: v.controls,
+      captions: v.textTracks[0]?.mode,
+    }));
+
+  test('poster first: no media download before it is in view, fixed 16:9 frame, no layout shift', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const media: string[] = [];
+    page.on('request', (r) => { if (isMedia(r.url())) media.push(r.url()); });
+    await page.goto('/');
+    await page.waitForLoadState('load');
+    await page.waitForTimeout(500);
+    expect(media).toEqual([]);
+    const video = page.locator('#video video');
+    await expect(video).toHaveAttribute('preload', 'none');
+    const before = await page.locator('#video .sizzler__frame').boundingBox();
+    expect(Math.abs(before!.height - (before!.width * 9) / 16)).toBeLessThan(1.5);
+    await video.scrollIntoViewIfNeeded();
+    await expect.poll(async () => (await state(page)).paused, { timeout: 8000 }).toBe(false);
+    const after = await page.locator('#video .sizzler__frame').boundingBox();
+    expect(after!.height).toBe(before!.height);
+    expect(media.length).toBeGreaterThan(0);
+  });
+
+  test('no-preference: autoplays muted and looped only while in view', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    expect((await state(page)).paused).toBe(true);
+    await page.locator('#video video').scrollIntoViewIfNeeded();
+    await expect.poll(async () => (await state(page)).paused, { timeout: 8000 }).toBe(false);
+    expect(await state(page)).toMatchObject({ muted: true, loop: true, controls: true });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect.poll(async () => (await state(page)).paused).toBe(true);
+  });
+
+  test('reduce: no autoplay; keyboard play starts it with controls and captions', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const media: string[] = [];
+    page.on('request', (r) => { if (isMedia(r.url())) media.push(r.url()); });
+    await page.goto('/');
+    const play = page.locator('#video .sizzler__play');
+    await play.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1500);
+    expect(await state(page)).toMatchObject({ paused: true, controls: false });
+    expect(media).toEqual([]);
+    await expect(play).toBeVisible();
+    await expect(play).toHaveAccessibleName(/play/i);
+    await play.focus();
+    await page.keyboard.press('Enter');
+    await expect.poll(async () => (await state(page)).paused, { timeout: 8000 }).toBe(false);
+    expect(await state(page)).toMatchObject({ controls: true, loop: false, muted: false, captions: 'showing' });
+    await expect(play).toBeHidden();
+    await expect(page.locator('#video video')).toBeFocused();
+  });
+
+  test('transcript is available as text', async ({ page }) => {
+    await page.goto('/');
+    const details = page.locator('#video details');
+    await details.locator('summary').click();
+    await expect(details.locator('li').first()).toBeVisible();
+    expect(await details.locator('li').count()).toBeGreaterThanOrEqual(7);
+  });
+
+  for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+    test(`axe: no WCAG 2 A/AA violations in the video section (${reducedMotion})`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion });
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto('/');
+      await page.locator('#video video').scrollIntoViewIfNeeded();
+      await page.locator('#video details summary').click();
+      await page.waitForTimeout(500);
+      const results = await new AxeBuilder({ page })
+        .include('#video')
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+    });
+  }
+});

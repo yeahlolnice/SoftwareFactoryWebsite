@@ -1,0 +1,162 @@
+---
+import { site } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import SectionHeader from './SectionHeader.astro';
+
+const { sizzler } = site;
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+---
+
+<section id="video" class="section section--surface" aria-labelledby="video-heading">
+  <div class="container">
+    <SectionHeader id="video-heading" eyebrow={sizzler.eyebrow} title={sizzler.heading} lead={sizzler.lead} align="center" />
+    <div class="sizzler section__body" data-sizzler>
+      <div class="sizzler__frame">
+        <video
+          class="sizzler__video"
+          poster={sizzler.poster}
+          width={sizzler.width}
+          height={sizzler.height}
+          preload="none"
+          muted
+          playsinline
+          controls
+          aria-label={sizzler.title}
+          aria-describedby="sizzler-transcript"
+        >
+          {sizzler.sources.map((s) => <source src={s.src} type={s.type} />)}
+          <track kind="captions" src={sizzler.captions.src} srclang={sizzler.captions.srclang} label={sizzler.captions.label} />
+        </video>
+        <Button variant="primary" size="lg" icon="play" class="sizzler__play">{sizzler.playLabel}</Button>
+      </div>
+      <details class="sizzler__transcript" id="sizzler-transcript">
+        <summary>
+          {sizzler.transcriptLabel}
+          <Icon name="chevron-down" size={18} />
+        </summary>
+        <ol class="sizzler__cues">
+          {
+            sizzler.cues.map((c) => (
+              <li>
+                <span class="sizzler__time">{clock(c.start)}</span>
+                <span>{c.text}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </details>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/sizzler.js';
+</script>
+
+<style>
+  .sizzler {
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+  .sizzler__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-mock);
+  }
+  .sizzler__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sizzler :global(.sizzler__play) {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-6);
+    transform: translateX(-50%);
+  }
+  .sizzler[data-state='poster'] :global(.sizzler__play) {
+    display: inline-flex;
+  }
+  .sizzler[data-state='poster'] :global(.sizzler__play:active) {
+    transform: translate(-50%, 1px);
+  }
+  .sizzler__transcript {
+    margin-top: var(--space-4);
+    color: var(--text-muted);
+  }
+  .sizzler__transcript summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    color: var(--text);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+  }
+  .sizzler__transcript summary::-webkit-details-marker {
+    display: none;
+  }
+  .sizzler__transcript summary :global(svg) {
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .sizzler__transcript[open] summary :global(svg) {
+    transform: rotate(180deg);
+  }
+  .sizzler__cues {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding: 0;
+    list-style: none;
+    line-height: var(--leading-base);
+  }
+  .sizzler__cues li {
+    display: flex;
+    gap: var(--space-3);
+  }
+  .sizzler__time {
+    flex: none;
+    min-width: 3rem;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-base);
+  }
+
+  /* Small frames: icon-only button in the corner so it does not cover the poster copy; the label stays accessible. */
+  @media (max-width: 639px) {
+    .sizzler :global(.sizzler__play) {
+      left: auto;
+      right: var(--space-3);
+      bottom: var(--space-3);
+      width: var(--tap-target);
+      min-height: var(--tap-target);
+      padding: 0;
+      border-radius: var(--radius-pill);
+      transform: none;
+    }
+    .sizzler[data-state='poster'] :global(.sizzler__play:active) {
+      transform: translateY(1px);
+    }
+    .sizzler :global(.sizzler__play span) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sizzler__transcript summary :global(svg) {
+      transition: none;
+    }
+  }
+</style>

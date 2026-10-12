@@ -1,19 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
+import SizzlerVideo from '../components/SizzlerVideo.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import Features from '../components/Features.astro';
 import AgentRoles from '../components/AgentRoles.astro';
 import Faq from '../components/Faq.astro';
 import CtaShowcase from '../components/CtaShowcase.astro';
 import DownloadCta from '../components/DownloadCta.astro';
-import { faqPageLd, jsonLd, softwareApplicationLd } from '../data/structured-data';
+import { faqPageLd, jsonLd, softwareApplicationLd, videoObjectLd } from '../data/structured-data';
 ---
 
 <Base>
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(softwareApplicationLd)} />
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(faqPageLd)} />
+  <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(videoObjectLd)} />
   <Hero />
+  <SizzlerVideo />
   <HowItWorks />
   <Features />
   <AgentRoles />
