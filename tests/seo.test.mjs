@@ -131,7 +131,13 @@ test('sizzler video is poster-first with captions and a visible transcript', () 
   assert.match(tag, /\swidth="\d+"/);
   assert.match(tag, /\sheight="\d+"/);
   assert.doesNotMatch(tag, /\sautoplay\b/, 'autoplay is decided in JS (in view, no reduced motion)');
-  const track = html.match(/<track\b[^>]*>/)?.[0] ?? '';
+  // TASK-028: sources, captions and controls are added on play; shipping them on the <video> stalls WebKit's load event.
+  const body = html.match(/<video\b[^>]*>([\s\S]*?)<\/video>/)?.[1] ?? '';
+  assert.doesNotMatch(body, /<(source|track)\b/, '<video> must ship empty');
+  assert.doesNotMatch(tag, /\scontrols\b/, 'controls are turned on when playback starts');
+  const media = html.match(/<template data-sizzler-media\b[^>]*>([\s\S]*?)<\/template>/)?.[1] ?? '';
+  assert.equal([...media.matchAll(/<source\b[^>]*\ssrc="\/video\/[^"]+"[^>]*>/g)].length, 2, 'sources missing from the media template');
+  const track = media.match(/<track\b[^>]*>/)?.[0] ?? '';
   assert.match(track, /kind="captions"/);
   const vttPath = track.match(/src="([^"]+)"/)[1];
   const vtt = read(`dist${vttPath}`).replace(/\r\n/g, '\n'); // tolerate core.autocrlf checkouts

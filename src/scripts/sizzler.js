@@ -1,4 +1,5 @@
-// Sizzler video: poster first (preload="none" in the markup, so nothing downloads until play()).
+// Sizzler video: poster first. The markup ships an empty <video>; sources and the caption track are moved in from a
+// <template> on first play, so nothing downloads before then and WebKit's load event is not held up (TASK-028).
 // Muted autoplay-loop only while in view and when reduced motion is not requested; otherwise click to play.
 (function () {
   var root = document.querySelector('[data-sizzler]');
@@ -11,6 +12,15 @@
   var autoplaying = false;
   var systemPause = false;
   var inView = false;
+  var media = root.querySelector('template[data-sizzler-media]');
+
+  var attach = function () {
+    if (!media) return;
+    video.appendChild(media.content.cloneNode(true));
+    media = null;
+    video.load();
+    captions('hidden'); // burned-in captions carry the copy while it autoplays muted
+  };
 
   var setState = function (state) { root.setAttribute('data-state', state); };
   var captions = function (mode) {
@@ -30,6 +40,7 @@
     autoplaying = auto;
     video.muted = auto; // autoplay must be muted; an explicit Play has sound
     video.loop = auto;
+    attach();
     video.controls = true;
     setState('playing');
     var p = video.play();
@@ -42,13 +53,11 @@
   };
 
   toPoster();
-  // Shown again on demand: burned-in captions carry the copy while it autoplays muted.
-  captions('hidden');
 
   play.addEventListener('click', function () {
     started = true;
-    captions('showing');
     start(false);
+    captions('showing');
     video.focus();
   });
   video.addEventListener('pause', function () {
