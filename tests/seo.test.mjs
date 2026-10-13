@@ -102,7 +102,7 @@ test('robots.txt allows crawling and points at the sitemap', () => {
 
 test('sitemap.xml lists the home page', () => {
   const sitemap = read('dist/sitemap.xml');
-  assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+  assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/);
   assert.match(sitemap, /<loc>https?:\/\/[^<]+\/<\/loc>/);
 });
 
@@ -139,4 +139,42 @@ test('sizzler video is poster-first with captions and a visible transcript', () 
   const cues = [...vtt.matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})\n(.+)$/gm)];
   assert.ok(cues.length >= 7, 'too few caption cues');
   for (const [, , , text] of cues) assert.ok(html.includes(escapeHtml(text)), `cue not in visible transcript: ${text}`);
+});
+
+test('index.html has Open Graph video tags that match the VideoObject file', () => {
+  const video = ldBlocks().find((b) => b['@type'] === 'VideoObject');
+  assert.equal(metaContent(html, 'property', 'og:video'), video.contentUrl);
+  assert.equal(metaContent(html, 'property', 'og:video:secure_url'), video.contentUrl);
+  assert.equal(metaContent(html, 'property', 'og:video:type'), 'video/mp4');
+  assert.equal(metaContent(html, 'property', 'og:video:width'), String(video.width));
+  assert.equal(metaContent(html, 'property', 'og:video:height'), String(video.height));
+  assert.ok(existsSync(new URL(`dist${new URL(video.contentUrl).pathname}`, root)), 'og:video file missing from dist');
+});
+
+test('the page has exactly one VideoObject JSON-LD block', () => {
+  const videos = ldBlocks().filter((b) => b['@type'] === 'VideoObject');
+  assert.equal(videos.length, 1);
+  assert.equal([...html.matchAll(/"@type":"VideoObject"/g)].length, 1);
+});
+
+test('sitemap.xml has a video entry for the home page', () => {
+  const sitemap = read('dist/sitemap.xml');
+  const video = ldBlocks().find((b) => b['@type'] === 'VideoObject');
+  const entry = sitemap.match(/<url><loc>([^<]+)<\/loc><video:video>([\s\S]*?)<\/video:video><\/url>/);
+  assert.ok(entry, 'sitemap video entry missing');
+  assert.match(sitemap, /xmlns:video="http:\/\/www\.google\.com\/schemas\/sitemap-video\/1\.1"/);
+  assert.equal(entry[1], new URL('/', video.contentUrl).href);
+  const field = (name) => entry[2].match(new RegExp(`<video:${name}>([^<]*)</video:${name}>`))?.[1];
+  assert.equal(field('thumbnail_loc'), video.thumbnailUrl[0]);
+  assert.equal(field('content_loc'), video.contentUrl);
+  assert.equal(field('title'), video.name);
+  assert.equal(field('description'), video.description);
+  assert.equal(field('duration'), String(Number(video.duration.match(/(\d+)S$/)[1])));
+  assert.equal(field('publication_date'), video.uploadDate);
+  assert.ok(existsSync(new URL(`dist${new URL(field('content_loc')).pathname}`, root)));
+});
+
+test('sitemap.xml has no unescaped ampersands or angle brackets in text', () => {
+  const sitemap = read('dist/sitemap.xml');
+  assert.doesNotMatch(sitemap, /&(?!(amp|lt|gt|quot|apos);)/);
 });

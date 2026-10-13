@@ -8,13 +8,19 @@ import AgentRoles from '../components/AgentRoles.astro';
 import Faq from '../components/Faq.astro';
 import CtaShowcase from '../components/CtaShowcase.astro';
 import DownloadCta from '../components/DownloadCta.astro';
-import { faqPageLd, jsonLd, softwareApplicationLd, videoObjectLd } from '../data/structured-data';
+import { faqPageLd, jsonLd, sizzlerContentUrl, softwareApplicationLd, videoObjectLd } from '../data/structured-data';
+import { site } from '../data/site';
 ---
 
 <Base>
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(softwareApplicationLd)} />
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(faqPageLd)} />
   <script slot="head" is:inline type="application/ld+json" set:html={jsonLd(videoObjectLd)} />
+  <meta property="og:video" content={sizzlerContentUrl} slot="head" />
+  <meta property="og:video:secure_url" content={sizzlerContentUrl} slot="head" />
+  <meta property="og:video:type" content="video/mp4" slot="head" />
+  <meta property="og:video:width" content={String(site.sizzler.width)} slot="head" />
+  <meta property="og:video:height" content={String(site.sizzler.height)} slot="head" />
   <Hero />
   <SizzlerVideo />
   <HowItWorks />
