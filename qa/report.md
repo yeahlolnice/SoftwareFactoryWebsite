@@ -178,17 +178,17 @@ Scope: the built site (`npm run build`, `astro preview`) and the rendered video 
 
 | Check | Result |
 | --- | --- |
-| `npm test` (build, node tests, Playwright) | Build OK. `node --test tests/`: **65 pass, 0 fail, 0 skipped** (the 5 ffprobe tests run once ffprobe is present). Playwright: **31 passed** with `--workers=2`. The default-worker run is flaky (see Test stability). |
+| `npm test` (build, node tests, Playwright) | **Green at default workers** (round 2, branch as committed): build OK; `node --test tests/`: **69 pass, 0 fail, 0 skipped** (ffprobe present); Playwright: **31 passed**. `workers: 2` is now fixed in `playwright.config.ts` (see Test stability). |
 | Video codec, size and length | `sizzler.mp4`: H.264 High, 1920x1080, yuv420p, 30 fps, 1200 frames, 40.0 s, 7.9 MB. `sizzler.webm`: VP9, 1920x1080, yuv420p, 30 fps, 40.0 s, 3.2 MB. Both decode end to end with `ffmpeg -v error -f null` and no errors. `sizzler-poster.webp`: 1920x1080 WebP. |
 | Cross-browser playback (explicit Play, `currentTime` advances) | Chromium: plays (WebM; the Playwright Chromium build has no H.264, so the MP4 fallback was not exercised here). Firefox: plays. WebKit: plays. All show 1920x1080 and no `error`. |
 | Poster before play | Poster, play button and `data-state="poster"` present in all 3 engines at 1280 px (screenshot checked). Mobile Chromium at 360 and 390 px: frame is 16:9 (ratio 0.563), no horizontal overflow. |
 | Reduced motion | `reduce`: no autoplay, no media request in view, controls hidden. Keyboard Enter on Play starts playback with sound and captions shown, and the play button hides. Same result in Chromium, Firefox and WebKit. |
 | Autoplay when in view (no-preference) | Muted, looped, controls on, only while in view; pauses when scrolled away. Same in all 3 engines. |
 | Accessibility | axe (wcag2a/aa, wcag21a/aa) on the video section at both motion settings: 0 violations (Chromium). Keyboard: Play is reachable and Enter starts playback in all 3 engines. Transcript `<details>` is text. |
-| No video request before interaction or visibility | **FAIL in WebKit.** Chromium and Firefox: 0 media requests before the video is in view. WebKit: `sizzler.webm` is requested at load, with the video about 1650 px below the fold. See BUG-005. |
+| No video request before interaction or visibility | **Open on this branch (FAIL in WebKit); fixed on the TASK-027 candidate, not yet landed.** On this branch WebKit requests `sizzler.webm` at load (BUG-005). On candidate `3db7143` (TASK-027, in review, not on any branch in this repo) the probe shows `mediaBeforeInView` empty in Chromium, Firefox and WebKit at both motion settings. See Round 2. |
 | No CLS | Chromium: CLS 0.0000 over a full scroll of the page at 1280 and 390 px. |
 | First load / LCP / weight (Chromium) | First load 58 KB over 10 requests, no video request. Poster (35.6 KB) and VTT (0.6 KB) are fetched at load; the poster is an image and is not video bytes, but it could be lazy-loaded. LCP is the H1 at 172 ms (desktop) and the hero paragraph at 131 ms (390 px). The video does not affect LCP. |
-| Mobile WebKit (iPhone 13 emulation) | **Page `load` never fires** and the play button is unreachable with the video present. See BUG-006 (not verified on a real iOS device). |
+| Mobile WebKit (iPhone 13 emulation) | On this branch **page `load` never fires** and the play button is unreachable with the video present (BUG-006; not verified on a real iOS device). On the TASK-027 candidate the page reaches `readyState: complete` with one play button (emulation only, see Round 2). |
 
 ## Frame and copy review
 
@@ -209,7 +209,35 @@ Reviewed a 4x4 contact sheet of the MP4 (every 2.5 s), the poster, full-resoluti
 
 ## Test stability
 
-The first full `npm test` (default workers) failed 3 to 5 Playwright tests each run (teardown timeouts and "Target page, context or browser has been closed"). The failing set changed between runs (nav anchor 360, imagery 390, CTA showcase, sizzler axe, sizzler poster-first). Each one passed on rerun, and the full suite passed 31/31 with `--workers=2`. The cause is load on this 22-core sandbox with video decoding in parallel, not an assertion. Suggested fix (DevOps/QA): set `workers` in `playwright.config.ts` to a fixed low number on CI and locally, and reduce the per-test timeout pressure for the sizzler tests.
+The first full `npm test` (default workers) failed 3 to 5 Playwright tests each run (teardown timeouts and "Target page, context or browser has been closed"). The failing set changed between runs (nav anchor 360, imagery 390, CTA showcase, sizzler axe, sizzler poster-first). Each one passed on rerun, and the full suite passed 31/31 with `--workers=2`. The cause is load on this 22-core sandbox with video decoding in parallel, not an assertion. **Fixed in round 2:** `playwright.config.ts` now sets `workers: 2`. A plain `npm test` on the branch is green (31/31). The same fixed count also makes the TASK-027 candidate green (see Round 2). Timing assertions such as the 2.5 s `load` budget in `sizzler-preload.spec.ts` are still load-sensitive: at the default 22 workers the candidate failed that check in Chromium and WebKit, so keep the worker cap.
+
+## Round 2: DevOps review
+
+DevOps asked for three things: (1) a clean default-worker suite, (2) the BUG-005 fix landed and the probe rerun, and (3) BUG-006 kept as unverified on iOS. Status:
+
+| Request | Status |
+| --- | --- |
+| (1) Full suite green at default workers | **Done on this branch.** `workers: 2` added to `playwright.config.ts`. `npm test` exit 0: build OK, node 69/69 pass with ffprobe present, Playwright 31/31. |
+| (2) BUG-005 fix landed, probe rerun | **Not landed on this branch, verified on the candidate.** The fix is commit `3db7143` (TASK-027, Frontend Lead, status `review`). It is not reachable from any ref in this repo, so I did not cherry-pick another team's source change into the QA branch. I tested it in a detached worktree at `main` (9b42c8a) with `3db7143` applied. See the table below. |
+| (3) BUG-006 kept unverified on iOS | **Kept.** The iOS Safari behaviour is still unknown. The emulation result below is not evidence about real devices. |
+
+### Branch vs candidate (same environment, probe run against each build)
+
+| Probe (`qa/sizzler-browser-probe.mjs`) | Branch (`main` + QA) | Candidate (`main` + `3db7143`) |
+| --- | --- | --- |
+| Chromium / Firefox `mediaBeforeInView` | `[]` / `[]` | `[]` / `[]` |
+| WebKit `mediaBeforeInView` (reduce / no-preference) | `["sizzler.webm"]` / `["sizzler.webm"]` | `[]` / `[]` |
+| Play after keyboard Enter, `paused` (all 3 engines) | `false` | `false` |
+| WebKit in view, no-preference, `paused` | `false` | `false` |
+| iPhone 13 WebKit, `readyState` after 5 s | `interactive` (BUG-006) | `complete`, 1 play button |
+
+Candidate Playwright suite (`npx playwright test`, plain default command, `workers: 2` applied in the worktree): **37 passed, 0 failed**, which includes the 6 new `sizzler-preload` tests in Chromium, Firefox and WebKit. Candidate node suite: **67 pass, 0 fail, 3 skipped**. The skips are ffprobe-gated tests, because the throwaway worktree has no `tools/sizzler/.bin`. The branch run had ffprobe and passed all 69.
+
+Candidate at default workers (22, no worker cap): 2 runs. Run 1 failed 3 tests: the 2.5 s `load` check in `sizzler-preload.spec.ts` (Chromium and WebKit) and an imagery 5 s wait in Chromium. Run 2 failed 1 test, the same Chromium `load` check. These are the load-driven timeouts described above, which is why the worker cap is kept.
+
+**Status of "no video request before interaction or visibility":** met on the candidate (`3db7143`), not met on this branch until TASK-027 merges to `main`. Once it lands, rerun `qa/sizzler-browser-probe.mjs` against the built `main`. This is the acceptance check, and it should show `mediaBeforeInView` empty for WebKit.
+
+**iPhone 13 WebKit `load` (BUG-006, TASK-028):** the candidate removes the hang in emulation. The likely cause is the eager `<source>` children, which matches the bisect in the BUG-006 notes. Still **not verified on iOS Safari**. Keep TASK-028 open until a real iOS device or device farm confirms it.
 
 ## Notes
 
