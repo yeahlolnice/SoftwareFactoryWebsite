@@ -313,7 +313,7 @@
     el(obj, 'label muted', { left: 30, top: 18, fontSize: '22px' }, 'OBJECTIVE');
     const typed = el(obj, 'mono', { left: 30, top: 62, fontSize: '28px', color: C.text });
     const OBJECTIVE = 'Build a website for my product';
-    cue(276, 449, OBJECTIVE);
+    cue(282, 449, OBJECTIVE); // starts with the 'Give it a goal.' headline so the caption reads headline first
     const TASKS = [['Design', C.violet], ['Frontend', C.info], ['DevOps', C.warn], ['QA', C.accent], ['SEO', C.violet]];
     const pmX = 830, pmY = 505;
     const lines = svg(cam, 1920, 1080,
@@ -495,7 +495,7 @@
     el(budget, '', { left: 1466, top: 112, width: 4, height: 48, background: C.text, borderRadius: '2px' });
     el(budget, 'label muted', { right: 60, top: 70, fontSize: '22px' }, 'cap');
     const hC = textLine(c, 'headline', { left: 96, top: 150 }, 'Your budget. Your <span style="color:var(--warn)">cap.</span>', 856, 926, 'Your budget. Your cap.');
-    cue(862, 926, '$ 12.40 / $ 50.00');
+    cue(862, 926, '$12.40 / $50.00');
     // Continuity label (does not track with the camera).
     const tokens = ['branch-per-task', 'approval-gates', 'budget-control'];
     const cont = el(root, 'label', { left: 96, bottom: 96 });
@@ -547,7 +547,7 @@
       const bi = P(f, 846, 868, E.outExpo);
       bill.style.transform = `translateX(${200 * (1 - bi)}px)`;
       show(bill, bi);
-      counter.textContent = `$ ${(12.4 * P(f, 862, 892, E.outExpo)).toFixed(2)} / $ 50.00`;
+      counter.textContent = `$${(12.4 * P(f, 862, 892, E.outExpo)).toFixed(2)} / $50.00`; // app format, e.g. Budget $0.00 / $5.00
       const fill = P(f, 866, 906, E.inOut);
       meter.style.transform = `scaleX(${Math.max(0.001, fill)})`;
       meter.style.background = mix(C.accent, C.warn, P(fill, 0.78, 0.82));

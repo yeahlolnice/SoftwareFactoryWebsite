@@ -3,6 +3,7 @@
 //
 //   npm run render:sizzler                  full render -> public/video/
 //   node tools/sizzler/render.mjs --frames 0,240,1140 --out /tmp/stills   PNG stills only
+//   node tools/sizzler/render.mjs --vtt     captions only (no ffmpeg)
 //
 // Outputs: public/video/sizzler.mp4 (H.264, yuv420p, faststart, <= 8 MB), sizzler.webm (VP9),
 // sizzler-poster.webp (frame 1140) and sizzler.vtt (every on-screen line, for accessibility).
@@ -11,6 +12,7 @@ import { mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
+import { toVtt } from './captions.mjs';
 import { ensureFfmpeg, probe } from './ffmpeg.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -42,12 +44,6 @@ async function capture(page, f, file) {
   await page.evaluate((n) => window.SIZZLER.seek(n), f);
   await page.screenshot({ path: file, type: 'png', animations: 'disabled', caret: 'initial' });
 }
-
-const ts = (f, fps) => {
-  const ms = Math.round((f / fps) * 1000);
-  const p = (n, w = 2) => String(n).padStart(w, '0');
-  return `${p(Math.floor(ms / 3600000))}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)}.${p(ms % 1000, 3)}`;
-};
 
 function ffmpegRun(ffmpeg, argv) {
   execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', ...argv], { stdio: 'inherit' });
@@ -107,8 +103,7 @@ async function full() {
     if (statSync(poster).size <= POSTER_TARGET || q <= 45) break;
   }
 
-  const vtt = ['WEBVTT', '', ...meta.cues.map((c) => `${ts(c.start, meta.fps)} --> ${ts(Math.min(c.end, meta.frames), meta.fps)}\n${c.text}\n`)].join('\n');
-  writeFileSync(join(OUT, 'sizzler.vtt'), vtt);
+  writeFileSync(join(OUT, 'sizzler.vtt'), toVtt(meta.cues, meta.fps, meta.frames));
 
   for (const file of [mp4, webm]) {
     const p = probe(ffprobe, file);
@@ -118,6 +113,14 @@ async function full() {
   if (!args.includes('--keep-frames')) rmSync(FRAMES_DIR, { recursive: true, force: true });
 }
 
+async function vttOnly() {
+  const { browser, meta } = await openScene();
+  await browser.close();
+  writeFileSync(join(OUT, 'sizzler.vtt'), toVtt(meta.cues, meta.fps, meta.frames));
+  console.log('Wrote public/video/sizzler.vtt');
+}
+
 const frameList = opt('--frames');
-if (frameList) await stills(frameList.split(',').map(Number), resolve(opt('--out') ?? join(here, '.stills')));
+if (args.includes('--vtt')) await vttOnly();
+else if (frameList) await stills(frameList.split(',').map(Number), resolve(opt('--out') ?? join(here, '.stills')));
 else await full();
