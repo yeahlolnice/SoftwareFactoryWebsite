@@ -169,3 +169,117 @@ Page layout is correct (no horizontal scroll), but the screenshots are not legib
 - Owner must confirm the billing screenshot's real spend figures can be public (TODO(PO) in `src/data/site.ts`).
 - PM/QA still need to confirm the regenerated `qa/screenshots/` baselines are intended. `npm test` overwrites them; they were not committed.
 - Git history still contains the real username and client name in `docs/imagery-brief.md`. Removing them from history would need a rewrite, which is the PM's call.
+
+# TASK-025: sizzler video QA and Lighthouse-style pass
+
+Scope: the built site (`npm run build`, `astro preview`) and the rendered video in `public/video/`. Browsers: Chromium, Firefox and WebKit from `/ms-playwright` (Playwright 1.48.2). ffmpeg and ffprobe were fetched with the repo's own `ensureFfmpeg()` into `tools/sizzler/.bin/` (git-ignored) so the probe tests actually run. The reviewer model for the frame review was Haiku 5.5. The task asked for Opus 5.5, so the frame and copy review should be repeated on Opus if the PM wants that tier.
+
+## Result
+
+| Check | Result |
+| --- | --- |
+| `npm test` (build, node tests, Playwright) | **Green at default workers on the merged branch (round 3):** build complete; `node --test tests/`: **71 pass, 0 fail, 0 skipped**; Playwright: **33 passed, 0 failed** (32 chromium + 2 webkit-iphone13). See Round 3. Round 2 counts (69 / 31) are superseded. |
+| Video codec, size and length | `sizzler.mp4`: H.264 High, 1920x1080, yuv420p, 30 fps, 1200 frames, 40.0 s, 7.9 MB. `sizzler.webm`: VP9, 1920x1080, yuv420p, 30 fps, 40.0 s, 3.2 MB. Both decode end to end with `ffmpeg -v error -f null` and no errors. `sizzler-poster.webp`: 1920x1080 WebP. |
+| Cross-browser playback (explicit Play, `currentTime` advances) | Chromium: plays (WebM; the Playwright Chromium build has no H.264, so the MP4 fallback was not exercised here). Firefox: plays. WebKit: plays. All show 1920x1080 and no `error`. |
+| Poster before play | Poster, play button and `data-state="poster"` present in all 3 engines at 1280 px (screenshot checked). Mobile Chromium at 360 and 390 px: frame is 16:9 (ratio 0.563), no horizontal overflow. |
+| Reduced motion | `reduce`: no autoplay, no media request in view, controls hidden. Keyboard Enter on Play starts playback with sound and captions shown, and the play button hides. Same result in Chromium, Firefox and WebKit. |
+| Autoplay when in view (no-preference) | Muted, looped, controls on, only while in view; pauses when scrolled away. Same in all 3 engines. |
+| Accessibility | axe (wcag2a/aa, wcag21a/aa) on the video section at both motion settings: 0 violations (Chromium). Keyboard: Play is reachable and Enter starts playback in all 3 engines. Transcript `<details>` is text. |
+| No video request before interaction or visibility | **PASS (round 3, merged build).** `mediaBeforeInView` is empty for Chromium, Firefox and WebKit at both motion settings. The fix is on `main` via TASK-028 (`<source>`/`<track>` sit in `<template data-sizzler-media>` until play or in-view autoplay). TASK-027 was cancelled as superseded. See Round 3. |
+| No CLS | Chromium: CLS 0.0000 over a full scroll of the page at 1280 and 390 px. |
+| First load / LCP / weight (Chromium) | First load 58 KB over 10 requests, no video request. Poster (35.6 KB) and VTT (0.6 KB) are fetched at load; the poster is an image and is not video bytes, but it could be lazy-loaded. LCP is the H1 at 172 ms (desktop) and the hero paragraph at 131 ms (390 px). The video does not affect LCP. |
+| Mobile WebKit (iPhone 13 emulation) | **Emulation only:** the page reaches `readyState: complete` with one play button on the merged build (TASK-028). Not verified on real iOS Safari; see Round 3. |
+
+## Frame and copy review
+
+Reviewed a 4x4 contact sheet of the MP4 (every 2.5 s), the poster, full-resolution frames at 16.5 s, 27.5 s and 37.5 s, and the caption file.
+
+- No typos in the on-screen copy or in `sizzler.vtt`.
+- No clipped headlines or cards. Mid-typing log text ("nav.", "Softwa") is intentional kinetic typography.
+- Colours stay on the token palette (dark ground, green accent, amber DevOps, blue Frontend, purple SEO).
+- **Real data (owner decision, not a render defect):** the billing frame at about 30 s shows the same spend figures as `billing-costs.webp` ($30.97, $11.56, $0.47, $0.40, $0.00, $0.00). The existing TODO(PO) in `src/data/site.ts` (line 16) covers this and applies to the video too. The overview frames and the poster show the path `D:\Projects\acme-storefront` and the project name "Acme Storefront". There is no username in the video, and "Acme Storefront" was treated as a demo name in the TASK-013 review. The PO should confirm the path and name are fine to publish.
+- Overlapping cues: see BUG-007.
+
+## Bugs filed (this run)
+
+- **BUG-005 (high, TASK-027, frontend_developer): WebKit requests `sizzler.webm` before interaction.** Repro: `qa/sizzler-browser-probe.mjs` (webkit `mediaBeforeInView`). Chromium and Firefox make no request. The WebKit load event takes about 3.5 s versus about 0.2 s elsewhere, which fits a full WebM download (not byte-verified). Fix: keep `<source>` children out of the markup until play or in-view (e.g. `data-src`, set in `src/scripts/sizzler.js`).
+- **BUG-006 (medium, TASK-028, frontend_developer): WebKit iPhone 13 emulation never reaches `load`.** The DOM is fully parsed, but `readyState` stays `interactive`, module scripts do not run and the play button is unreachable. Minimal-page bisect: a preload=none video with a source loads in about 3 s, but adding `controls` or a `<track>` makes it hang; removing all `<source>` children unblocks it. The stderr shows "Button failed to load, iconName = invalid-placard", which suggests the WebKit-GTK media-control icons on Linux. **Not verified on iOS Safari.** Needs a real iOS device or a device farm before it is treated as a user bug.
+- **BUG-007 (low, TASK-029, frontend_developer): overlapping caption cues.** Several cues overlap in `public/video/sizzler.vtt` (for example 00:02.800–00:04.267 with 00:03.000–00:04.667, and 00:09.200–00:14.967 with 00:09.400–00:11.000). Two captions show at once when the track is on. Fix in the render timings, not by hand-editing the video.
+- **BUG-008 (low, TASK-030, ui_ux_designer): poster has a non-clickable "Download for Windows" pill.** It is burned-in image pixels above the real Play control. Remove it from the poster or make it the real download button.
+
+## Test stability
+
+The first full `npm test` (default workers) failed 3 to 5 Playwright tests each run (teardown timeouts and "Target page, context or browser has been closed"). The failing set changed between runs (nav anchor 360, imagery 390, CTA showcase, sizzler axe, sizzler poster-first). Each one passed on rerun, and the full suite passed 31/31 with `--workers=2`. The cause is load on this 22-core sandbox with video decoding in parallel, not an assertion. **Fixed in round 2:** `playwright.config.ts` now sets `workers: 2`. A plain `npm test` on the branch is green (31/31). The same fixed count also makes the TASK-027 candidate green (see Round 2). Timing assertions such as the 2.5 s `load` budget in `sizzler-preload.spec.ts` are still load-sensitive: at the default 22 workers the candidate failed that check in Chromium and WebKit, so keep the worker cap.
+
+## Round 2: DevOps review
+
+DevOps asked for three things: (1) a clean default-worker suite, (2) the BUG-005 fix landed and the probe rerun, and (3) BUG-006 kept as unverified on iOS. Status:
+
+| Request | Status |
+| --- | --- |
+| (1) Full suite green at default workers | **Done on this branch.** `workers: 2` added to `playwright.config.ts`. `npm test` exit 0: build OK, node 69/69 pass with ffprobe present, Playwright 31/31. |
+| (2) BUG-005 fix landed, probe rerun | **Not landed on this branch, verified on the candidate.** The fix is commit `3db7143` (TASK-027, Frontend Lead, status `review`). It is not reachable from any ref in this repo, so I did not cherry-pick another team's source change into the QA branch. I tested it in a detached worktree at `main` (9b42c8a) with `3db7143` applied. See the table below. |
+| (3) BUG-006 kept unverified on iOS | **Kept.** The iOS Safari behaviour is still unknown. The emulation result below is not evidence about real devices. |
+
+### Branch vs candidate (same environment, probe run against each build)
+
+| Probe (`qa/sizzler-browser-probe.mjs`) | Branch (`main` + QA) | Candidate (`main` + `3db7143`) |
+| --- | --- | --- |
+| Chromium / Firefox `mediaBeforeInView` | `[]` / `[]` | `[]` / `[]` |
+| WebKit `mediaBeforeInView` (reduce / no-preference) | `["sizzler.webm"]` / `["sizzler.webm"]` | `[]` / `[]` |
+| Play after keyboard Enter, `paused` (all 3 engines) | `false` | `false` |
+| WebKit in view, no-preference, `paused` | `false` | `false` |
+| iPhone 13 WebKit, `readyState` after 5 s | `interactive` (BUG-006) | `complete`, 1 play button |
+
+Candidate Playwright suite (`npx playwright test`, plain default command, `workers: 2` applied in the worktree): **37 passed, 0 failed**, which includes the 6 new `sizzler-preload` tests in Chromium, Firefox and WebKit. Candidate node suite: **67 pass, 0 fail, 3 skipped**. The skips are ffprobe-gated tests, because the throwaway worktree has no `tools/sizzler/.bin`. The branch run had ffprobe and passed all 69.
+
+Candidate at default workers (22, no worker cap): 2 runs. Run 1 failed 3 tests: the 2.5 s `load` check in `sizzler-preload.spec.ts` (Chromium and WebKit) and an imagery 5 s wait in Chromium. Run 2 failed 1 test, the same Chromium `load` check. These are the load-driven timeouts described above, which is why the worker cap is kept.
+
+**Status of "no video request before interaction or visibility":** met on the candidate (`3db7143`), not met on this branch until TASK-027 merges to `main`. Once it lands, rerun `qa/sizzler-browser-probe.mjs` against the built `main`. This is the acceptance check, and it should show `mediaBeforeInView` empty for WebKit.
+
+**iPhone 13 WebKit `load` (BUG-006, TASK-028):** the candidate removes the hang in emulation. The likely cause is the eager `<source>` children, which matches the bisect in the BUG-006 notes. Still **not verified on iOS Safari**. Keep TASK-028 open until a real iOS device or device farm confirms it.
+
+## Round 3: after merging main (TASK-028/030)
+
+`git merge main` into `task/TASK-025` was clean (no conflicts). `workers: 2` is kept on top of main's `playwright.config.ts`. Ran on the merged branch with `astro preview --port 4400`.
+
+### Default `npm test` (no flags)
+
+| Stage | Result |
+| --- | --- |
+| `astro build` | Complete |
+| `node --test tests/` | **71 pass, 0 fail, 0 skipped** (ffprobe present) |
+| `playwright test` | **33 passed, 0 failed** (32 `chromium`, 2 `webkit-iphone13`) |
+
+The TASK-025 round 2 flakiness did not recur on this run. The worker cap stays in place.
+
+### Probe before and after (`node qa/sizzler-browser-probe.mjs http://127.0.0.1:4400/`)
+
+"Before" is the branch as of round 2 (the table under Round 2). "After" is this merged build.
+
+| Probe | Before (round 2 branch) | After (merged `main` + QA) |
+| --- | --- | --- |
+| Chromium / Firefox `mediaBeforeInView` (reduce / no-preference) | `[]` / `[]` | `[]` / `[]` |
+| WebKit `mediaBeforeInView` (reduce / no-preference) | `["sizzler.webm"]` / `["sizzler.webm"]` | `[]` / `[]` |
+| Keyboard Enter on Play, `paused` (Chromium / Firefox / WebKit) | `false` / `false` / `false` | `false` / `false` / `false` (`src` sizzler.webm) |
+| In view, no-preference, `paused`, muted, loop, controls (all 3) | `false` | `false` (`src` sizzler.webm) |
+| In view, reduce, `paused`, no `src` (all 3) | not in the round 2 table | `true`, no src (all 3) |
+| iPhone 13 WebKit `readyState` / play buttons | `interactive` (hang) / 0 reachable | `complete` / 1 |
+
+The browser matrix is Chromium, Firefox and WebKit at desktop size, plus WebKit iPhone 13 emulation.
+
+### Status of the open items
+
+- **"No video request before interaction or visibility": PASS.** Cited to TASK-028, which is merged on `main`. The WebKit `sizzler.webm` request is gone on the merged build.
+- **TASK-027 (BUG-005, WebKit preload): cancelled, superseded.** The PM cancelled it. The candidate commit `3db7143` was not cherry-picked and is not used.
+- **TASK-028 (BUG-006, WebKit iPhone 13 `load` hang): complete, emulation only.** The page now reaches `load` in WebKit iPhone 13 emulation. **Still unverified on real iOS Safari.** This fix was only tested in emulation.
+- **TASK-029 (BUG-007, overlapping VTT cues): still `in_progress`** in the vault, so the overlaps are still open. Not a QA pass.
+- **TASK-030 (BUG-008, poster pill): complete.** Checked the rendered `public/video/sizzler-poster.webp`: "Download for Windows" is now plain text with the Windows glyph and no filled pill. The `tests/sizzler-poster.test.mjs` check passes.
+- **TODO(PO), still open:** the billing frame figures match the real spend shown in `billing-costs.webp`, and the overview and poster show the path `D:\Projects\acme-storefront`. The owner needs to confirm these are demo data.
+- **Frame review model:** the frame and copy review was done on Haiku 5.5, not Opus 5.5. This round only re-checked the poster text and did not repeat the full review. Repeat on Opus if the PM wants that tier.
+
+## Notes
+
+- `qa/sizzler-browser-probe.mjs` is the repro for BUG-005 and BUG-006. It prints JSON and needs the preview server on port 4400.
+- The regenerated `qa/screenshots/home-*.png` from `npm test` were restored from git and not committed. The baselines are still an open decision (see the TASK-013 section).
+- Chromium here cannot decode H.264, so MP4 playback is verified only by ffprobe and full decode, not by a browser. Real Chrome and Safari should be checked on the MP4 path.

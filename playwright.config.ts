@@ -8,6 +8,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  // Fixed low worker count: the default (one per core) overloads the box with
+  // parallel video decoding and makes timing-based assertions flaky (qa/report.md, TASK-025).
+  workers: 2,
   reporter: [['list']],
   use: {
     baseURL: BASE_URL,
