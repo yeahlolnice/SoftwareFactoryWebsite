@@ -227,7 +227,7 @@ const supportText = 'Contact details coming soon.'; // TODO(PO)
 function parseVtt(vtt: string): { start: number; end: number; text: string }[] {
   const secs = (t: string) => t.split(':').reduce((acc, part) => acc * 60 + Number(part), 0);
   return [...vtt.replace(/\r/g, '').matchAll(/^(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})[^\n]*\n((?:.+\n?)+)/gm)].map(
-    ([, start, end, text]) => ({ start: secs(start), end: secs(end), text: text.trim().replace(/\n/g, ' ') }),
+    ([, start, end, text]) => ({ start: secs(start), end: secs(end), text: text.trim() }), // keeps line breaks: one cue can hold lines shown together
   );
 }
 

@@ -137,7 +137,7 @@ Caption (f620-680): "Each agent owns a role, and works in parallel."
 **Intent:** trust: control without micromanagement. Three sub-beats of ~2.7 s.
 **5a Branch per task (f690-769):** Git-graph: `main` line horizontal in `--text-muted`; 5 coloured branches peel off (draw-on 16 f each, 4 f stagger) labelled mono `task/TASK-001`… Text: "A branch for every task." (Headline). Based on `branch-per-task.svg`.
 **5b Approval gates (f770-849):** One branch reaches a gate node (shield/lock icon from `approval-gates.svg`); a card "Review requested" appears with `--warn` ring; cursor clicks Approve; ring turns `--accent`, check ripple (12 f). Text: "You approve every merge." (Headline, "approve" in `--accent`).
-**5c Budget control (f850-929):** `billing-costs.webp` slides in (cropped to the cost chart, 1.3x). A mono counter `$ 12.40 / $ 50.00` counts up (ease-out-expo), meter fills `--accent` → `--warn` at 80% and stops at the cap with a small shake (snap, 6 f). Text: "Your budget. Your cap." (Headline, `--warn` for "cap"). Dollar values are illustrative: `TODO(PO): confirm no pricing/cost claims`.
+**5c Budget control (f850-929):** `billing-costs.webp` slides in (cropped to the cost chart, 1.3x). A mono counter `$12.40 / $50.00` counts up (ease-out-expo), meter fills `--accent` → `--warn` at 80% and stops at the cap with a small shake (snap, 6 f). Text: "Your budget. Your cap." (Headline, `--warn` for "cap"). Dollar values are illustrative: `TODO(PO): confirm no pricing/cost claims`.
 Caption continuity (bottom-left, mono Label): `branch-per-task · approval-gates · budget-control` — each token highlights `--accent` as its sub-beat plays.
 **Camera:** Lateral track right through the three sub-beats (parallax: foreground 1.0x, background 0.5x), ease-in-out, 80 f per hand-off.
 **Transition out:** 8 f crossfade; all gate and branch lines converge to a point on the right and flash `--accent` (the merge).
@@ -187,7 +187,7 @@ Caption continuity (bottom-left, mono Label): `branch-per-task · approval-gates
 | 5b | Review requested; Approve | Mono / button UI |
 | 5b | You approve every merge. | Headline |
 | 5c | Your budget. Your cap. | Headline |
-| 5c | $ 12.40 / $ 50.00 | Mono counter |
+| 5c | $12.40 / $50.00 | Mono counter |
 | 5 | branch-per-task · approval-gates · budget-control | Mono Label |
 | 6 | Merged. Shipped. | Display |
 | 6 | 5 / 5 tasks merged | Chip |

@@ -44,7 +44,7 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
             sizzler.cues.map((c) => (
               <li>
                 <span class="sizzler__time">{clock(c.start)}</span>
-                <span>{c.text}</span>
+                <span class="sizzler__line">{c.text}</span>
               </li>
             ))
           }
@@ -130,6 +130,9 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
   .sizzler__cues li {
     display: flex;
     gap: var(--space-3);
+  }
+  .sizzler__line {
+    white-space: pre-line;
   }
   .sizzler__time {
     flex: none;
