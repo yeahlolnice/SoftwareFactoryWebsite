@@ -37,15 +37,19 @@ export const faqPageLd = {
 
 const { sizzler } = site;
 
+// Shared by the VideoObject, the og:video tags (index.astro) and the video sitemap entry, so they cannot disagree.
+export const sizzlerContentUrl = absoluteUrl(sizzler.sources.find((s) => s.type === 'video/mp4')!.src);
+export const sizzlerThumbnailUrl = absoluteUrl(sizzler.poster);
+
 export const videoObjectLd = {
   '@context': context,
   '@type': 'VideoObject',
   name: sizzler.title,
   description: sizzler.description,
-  thumbnailUrl: [absoluteUrl(sizzler.poster)],
+  thumbnailUrl: [sizzlerThumbnailUrl],
   uploadDate: sizzler.uploadDate,
   duration: sizzler.duration,
-  contentUrl: absoluteUrl(sizzler.sources.find((s) => s.type === 'video/mp4')!.src),
+  contentUrl: sizzlerContentUrl,
   encodingFormat: 'video/mp4',
   width: sizzler.width,
   height: sizzler.height,
