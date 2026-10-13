@@ -155,10 +155,10 @@ Caption continuity (bottom-left, mono Label): `branch-per-task · approval-gates
 ### Scene 7: CTA end card (0:36.0-0:40.0, f1080-1199)
 
 **Intent:** clear, single call to action; also the poster look.
-**Visual:** Centre stack: lockup (wordmark), headline, button. The button pill (`--accent` fill, `--on-accent` label, `--radius-pill`, 24 px Windows icon from the site icon set) scales in (ease-out-expo, 16 f) with a one-time light sweep (12 f). Below it, mono Label: site URL `TODO(PO): final domain`. Soft `--glow-accent` pulse at 1 Hz (opacity 0.6 → 1.0, ease-in-out). All motion stops at f1140; hold final 2 s.
+**Visual:** Centre stack: lockup (wordmark), headline, download line. The download line is plain text, not a button (TASK-030): `--text` label with a 48 px `--accent` Windows icon, no fill, border or pill shape, rising in (ease-out-expo, 16 f). This frame is the poster, and a burned-in button looks clickable but is only pixels; it competed with the real Play control and the page's download CTA. Below it, mono Label: site URL `TODO(PO): final domain`. Soft `--glow-accent` pulse at 1 Hz (opacity 0.6 → 1.0, ease-in-out). All motion stops at f1140; hold final 2 s.
 **Text:**
 1. f1086-1120: "Your AI team is ready." (Display, `--text`)
-2. f1104-1140: "Download for Windows" (button label, 44 px, weight 600)
+2. f1104-1140: "Download for Windows" (plain text, 56 px, weight 600, `--text`; no button styling)
 3. f1120-1160: "Windows 10 and 11" (Label, `--text-muted`; `TODO(PO): confirm requirements`, mirrors `download.platformNote` in `src/data/site.ts`)
 **Camera:** Locked. Final 20 f: nothing moves (clean last frame).
 **End:** Hold to f1199, no fade-out (so the last frame can serve as the poster).
@@ -193,7 +193,7 @@ Caption continuity (bottom-left, mono Label): `branch-per-task · approval-gates
 | 6 | 5 / 5 tasks merged | Chip |
 | 6 | A whole project, finished by a team. | Caption |
 | 7 | Your AI team is ready. | Display |
-| 7 | Download for Windows | Button (exact label from `site.download.label`) |
+| 7 | Download for Windows | Plain text, not a button (exact label from `site.download.label`) |
 | 7 | Windows 10 and 11 | Label |
 | 7 | site URL | Label, TODO(PO) |
 
@@ -203,7 +203,7 @@ All copy: sentence case, no more than 7 words per Display/Headline line, caption
 
 - **Source frame:** f1140 (Scene 7 held end card) exported at 1920x1080 as `sizzler-poster.png` and a 1280x720 WebP.
 - **Why:** it shows brand, value statement and CTA in one frame, and is legible without motion.
-- **Composition:** `--bg` + glow, wordmark lockup top-centre, "Your AI team is ready." Display centre, `overview.webp` ghosted at 18% opacity behind, button below. No chaos elements.
+- **Composition:** `--bg` + glow, wordmark lockup top-centre, "Your AI team is ready." Display centre, `overview.webp` ghosted at 18% opacity behind, plain "Download for Windows" line below. No chaos elements and no burned-in buttons: the only clickable controls on the poster are the real HTML ones (Play, native video controls). Regression test: `tests/sizzler-poster.test.mjs`.
 - **Alt text for the `<video>` poster / fallback image:** "Software Factory: your AI team is ready. Download for Windows."
 - Use as `poster` attribute and as the LCP-safe static image; `preload="none"` until in viewport.
 

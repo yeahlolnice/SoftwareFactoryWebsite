@@ -139,7 +139,7 @@
   }
   const CURSOR = `<svg width="40" height="40" viewBox="0 0 24 24" style="left:0;top:0"><path d="M4 2l15 11.2-6.6.9 3.8 7.4-3 1.5-3.8-7.5L4 20z" fill="${C.text}" stroke="${C.bgDeep}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
   const CHECK = (c, s = 24) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" style="position:relative;vertical-align:-3px"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  const WINDOWS = `<svg width="36" height="36" viewBox="0 0 24 24" style="position:relative;vertical-align:-5px;margin-right:18px"><path fill="${C.onAccent}" d="M3 5.5l7.5-1v7H3zM11.5 4.4L21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>`;
+  const WINDOWS = `<svg width="48" height="48" viewBox="0 0 24 24" style="position:relative;vertical-align:-6px;margin-right:20px"><path fill="${C.accent}" d="M3 5.5l7.5-1v7H3zM11.5 4.4L21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>`;
 
   /* ---------- copy cues (also written to sizzler.vtt) ---------- */
 
@@ -610,13 +610,14 @@
     const lock = el(root, '', { left: 0, top: 140, width: 1920, height: 80 },
       `<div style="left:0;right:0;top:0;text-align:center;white-space:nowrap"><span style="width:80px;height:80px;position:relative;vertical-align:middle">${markSVG(80)}</span><span style="font-size:52px;font-weight:700;letter-spacing:-0.01em;vertical-align:middle;margin-left:20px">Software Factory</span></div>`);
     const head = textLine(root, 'display centered', { top: 372 }, 'Your AI team is ready.', 1086, null, 'Your AI team is ready.');
-    const btn = el(root, 'btn', { left: 960 - 330, top: 590, width: 660, height: 108, lineHeight: '108px', fontSize: '44px', background: C.accent, color: C.onAccent },
+    // Plain text, not a button (TASK-030): this frame is the poster, where a burned-in pill looks
+    // clickable but is only pixels and competes with the real play and download controls.
+    const dl = el(root, 'headline centered', { top: 600, fontSize: '56px', color: C.text },
       `${WINDOWS}Download for Windows`);
-    const sweep = el(btn, '', { left: 0, top: 0, width: 160, height: 108, background: 'linear-gradient(100deg, transparent, rgb(255 255 255 / 0.45), transparent)' });
     cue(1104, FRAMES, 'Download for Windows');
     // TODO(PO): confirm requirements; mirrors download.platformNote in src/data/site.ts.
-    const plat = textLine(root, 'label muted centered', { top: 744 }, 'Windows 10 and 11', 1120, null, 'Windows 10 and 11');
-    const url = SITE_URL ? textLine(root, 'label centered', { top: 796 }, SITE_URL, 1126, null, SITE_URL) : null;
+    const plat = textLine(root, 'label muted centered', { top: 700 }, 'Windows 10 and 11', 1120, null, 'Windows 10 and 11');
+    const url = SITE_URL ? textLine(root, 'label centered', { top: 752 }, SITE_URL, 1126, null, SITE_URL) : null;
 
     return (f) => {
       show(root, 1);
@@ -625,12 +626,9 @@
       show(lock, lt);
       lock.style.transform = `translateY(${16 * (1 - lt)}px)`;
       kinetic(head, f, 1086, null);
-      const bt = P(f, 1104, 1120, E.outExpo);
-      show(btn, bt);
-      btn.style.transform = `scale(${lerp(0.7, 1, bt)})`;
-      const sw = P(f, 1120, 1132, E.inOut);
-      show(sweep, f >= 1120 && f < 1132 ? 1 : 0);
-      sweep.style.transform = `translateX(${lerp(-200, 720, sw)}px)`;
+      const dt = P(f, 1104, 1120, E.outExpo);
+      show(dl, dt);
+      dl.style.transform = `translateY(${16 * (1 - dt)}px)`;
       kinetic(plat, f, 1120, null);
       if (url) kinetic(url, f, 1126, null);
     };
