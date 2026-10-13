@@ -178,17 +178,17 @@ Scope: the built site (`npm run build`, `astro preview`) and the rendered video 
 
 | Check | Result |
 | --- | --- |
-| `npm test` (build, node tests, Playwright) | **Green at default workers** (round 2, branch as committed): build OK; `node --test tests/`: **69 pass, 0 fail, 0 skipped** (ffprobe present); Playwright: **31 passed**. `workers: 2` is now fixed in `playwright.config.ts` (see Test stability). |
+| `npm test` (build, node tests, Playwright) | **Green at default workers on the merged branch (round 3):** build complete; `node --test tests/`: **71 pass, 0 fail, 0 skipped**; Playwright: **33 passed, 0 failed** (32 chromium + 2 webkit-iphone13). See Round 3. Round 2 counts (69 / 31) are superseded. |
 | Video codec, size and length | `sizzler.mp4`: H.264 High, 1920x1080, yuv420p, 30 fps, 1200 frames, 40.0 s, 7.9 MB. `sizzler.webm`: VP9, 1920x1080, yuv420p, 30 fps, 40.0 s, 3.2 MB. Both decode end to end with `ffmpeg -v error -f null` and no errors. `sizzler-poster.webp`: 1920x1080 WebP. |
 | Cross-browser playback (explicit Play, `currentTime` advances) | Chromium: plays (WebM; the Playwright Chromium build has no H.264, so the MP4 fallback was not exercised here). Firefox: plays. WebKit: plays. All show 1920x1080 and no `error`. |
 | Poster before play | Poster, play button and `data-state="poster"` present in all 3 engines at 1280 px (screenshot checked). Mobile Chromium at 360 and 390 px: frame is 16:9 (ratio 0.563), no horizontal overflow. |
 | Reduced motion | `reduce`: no autoplay, no media request in view, controls hidden. Keyboard Enter on Play starts playback with sound and captions shown, and the play button hides. Same result in Chromium, Firefox and WebKit. |
 | Autoplay when in view (no-preference) | Muted, looped, controls on, only while in view; pauses when scrolled away. Same in all 3 engines. |
 | Accessibility | axe (wcag2a/aa, wcag21a/aa) on the video section at both motion settings: 0 violations (Chromium). Keyboard: Play is reachable and Enter starts playback in all 3 engines. Transcript `<details>` is text. |
-| No video request before interaction or visibility | **Open on this branch (FAIL in WebKit); fixed on the TASK-027 candidate, not yet landed.** On this branch WebKit requests `sizzler.webm` at load (BUG-005). On candidate `3db7143` (TASK-027, in review, not on any branch in this repo) the probe shows `mediaBeforeInView` empty in Chromium, Firefox and WebKit at both motion settings. See Round 2. |
+| No video request before interaction or visibility | **PASS (round 3, merged build).** `mediaBeforeInView` is empty for Chromium, Firefox and WebKit at both motion settings. The fix is on `main` via TASK-028 (`<source>`/`<track>` sit in `<template data-sizzler-media>` until play or in-view autoplay). TASK-027 was cancelled as superseded. See Round 3. |
 | No CLS | Chromium: CLS 0.0000 over a full scroll of the page at 1280 and 390 px. |
 | First load / LCP / weight (Chromium) | First load 58 KB over 10 requests, no video request. Poster (35.6 KB) and VTT (0.6 KB) are fetched at load; the poster is an image and is not video bytes, but it could be lazy-loaded. LCP is the H1 at 172 ms (desktop) and the hero paragraph at 131 ms (390 px). The video does not affect LCP. |
-| Mobile WebKit (iPhone 13 emulation) | On this branch **page `load` never fires** and the play button is unreachable with the video present (BUG-006; not verified on a real iOS device). On the TASK-027 candidate the page reaches `readyState: complete` with one play button (emulation only, see Round 2). |
+| Mobile WebKit (iPhone 13 emulation) | **Emulation only:** the page reaches `readyState: complete` with one play button on the merged build (TASK-028). Not verified on real iOS Safari; see Round 3. |
 
 ## Frame and copy review
 
@@ -238,6 +238,45 @@ Candidate at default workers (22, no worker cap): 2 runs. Run 1 failed 3 tests: 
 **Status of "no video request before interaction or visibility":** met on the candidate (`3db7143`), not met on this branch until TASK-027 merges to `main`. Once it lands, rerun `qa/sizzler-browser-probe.mjs` against the built `main`. This is the acceptance check, and it should show `mediaBeforeInView` empty for WebKit.
 
 **iPhone 13 WebKit `load` (BUG-006, TASK-028):** the candidate removes the hang in emulation. The likely cause is the eager `<source>` children, which matches the bisect in the BUG-006 notes. Still **not verified on iOS Safari**. Keep TASK-028 open until a real iOS device or device farm confirms it.
+
+## Round 3: after merging main (TASK-028/030)
+
+`git merge main` into `task/TASK-025` was clean (no conflicts). `workers: 2` is kept on top of main's `playwright.config.ts`. Ran on the merged branch with `astro preview --port 4400`.
+
+### Default `npm test` (no flags)
+
+| Stage | Result |
+| --- | --- |
+| `astro build` | Complete |
+| `node --test tests/` | **71 pass, 0 fail, 0 skipped** (ffprobe present) |
+| `playwright test` | **33 passed, 0 failed** (32 `chromium`, 2 `webkit-iphone13`) |
+
+The TASK-025 round 2 flakiness did not recur on this run. The worker cap stays in place.
+
+### Probe before and after (`node qa/sizzler-browser-probe.mjs http://127.0.0.1:4400/`)
+
+"Before" is the branch as of round 2 (the table under Round 2). "After" is this merged build.
+
+| Probe | Before (round 2 branch) | After (merged `main` + QA) |
+| --- | --- | --- |
+| Chromium / Firefox `mediaBeforeInView` (reduce / no-preference) | `[]` / `[]` | `[]` / `[]` |
+| WebKit `mediaBeforeInView` (reduce / no-preference) | `["sizzler.webm"]` / `["sizzler.webm"]` | `[]` / `[]` |
+| Keyboard Enter on Play, `paused` (Chromium / Firefox / WebKit) | `false` / `false` / `false` | `false` / `false` / `false` (`src` sizzler.webm) |
+| In view, no-preference, `paused`, muted, loop, controls (all 3) | `false` | `false` (`src` sizzler.webm) |
+| In view, reduce, `paused`, no `src` (all 3) | not in the round 2 table | `true`, no src (all 3) |
+| iPhone 13 WebKit `readyState` / play buttons | `interactive` (hang) / 0 reachable | `complete` / 1 |
+
+The browser matrix is Chromium, Firefox and WebKit at desktop size, plus WebKit iPhone 13 emulation.
+
+### Status of the open items
+
+- **"No video request before interaction or visibility": PASS.** Cited to TASK-028, which is merged on `main`. The WebKit `sizzler.webm` request is gone on the merged build.
+- **TASK-027 (BUG-005, WebKit preload): cancelled, superseded.** The PM cancelled it. The candidate commit `3db7143` was not cherry-picked and is not used.
+- **TASK-028 (BUG-006, WebKit iPhone 13 `load` hang): complete, emulation only.** The page now reaches `load` in WebKit iPhone 13 emulation. **Still unverified on real iOS Safari.** This fix was only tested in emulation.
+- **TASK-029 (BUG-007, overlapping VTT cues): still `in_progress`** in the vault, so the overlaps are still open. Not a QA pass.
+- **TASK-030 (BUG-008, poster pill): complete.** Checked the rendered `public/video/sizzler-poster.webp`: "Download for Windows" is now plain text with the Windows glyph and no filled pill. The `tests/sizzler-poster.test.mjs` check passes.
+- **TODO(PO), still open:** the billing frame figures match the real spend shown in `billing-costs.webp`, and the overview and poster show the path `D:\Projects\acme-storefront`. The owner needs to confirm these are demo data.
+- **Frame review model:** the frame and copy review was done on Haiku 5.5, not Opus 5.5. This round only re-checked the poster text and did not repeat the full review. Repeat on Opus if the PM wants that tier.
 
 ## Notes
 
