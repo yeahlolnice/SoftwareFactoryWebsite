@@ -169,3 +169,50 @@ Page layout is correct (no horizontal scroll), but the screenshots are not legib
 - Owner must confirm the billing screenshot's real spend figures can be public (TODO(PO) in `src/data/site.ts`).
 - PM/QA still need to confirm the regenerated `qa/screenshots/` baselines are intended. `npm test` overwrites them; they were not committed.
 - Git history still contains the real username and client name in `docs/imagery-brief.md`. Removing them from history would need a rewrite, which is the PM's call.
+
+# TASK-025: sizzler video QA and Lighthouse-style pass
+
+Scope: the built site (`npm run build`, `astro preview`) and the rendered video in `public/video/`. Browsers: Chromium, Firefox and WebKit from `/ms-playwright` (Playwright 1.48.2). ffmpeg and ffprobe were fetched with the repo's own `ensureFfmpeg()` into `tools/sizzler/.bin/` (git-ignored) so the probe tests actually run. The reviewer model for the frame review was Haiku 5.5. The task asked for Opus 5.5, so the frame and copy review should be repeated on Opus if the PM wants that tier.
+
+## Result
+
+| Check | Result |
+| --- | --- |
+| `npm test` (build, node tests, Playwright) | Build OK. `node --test tests/`: **65 pass, 0 fail, 0 skipped** (the 5 ffprobe tests run once ffprobe is present). Playwright: **31 passed** with `--workers=2`. The default-worker run is flaky (see Test stability). |
+| Video codec, size and length | `sizzler.mp4`: H.264 High, 1920x1080, yuv420p, 30 fps, 1200 frames, 40.0 s, 7.9 MB. `sizzler.webm`: VP9, 1920x1080, yuv420p, 30 fps, 40.0 s, 3.2 MB. Both decode end to end with `ffmpeg -v error -f null` and no errors. `sizzler-poster.webp`: 1920x1080 WebP. |
+| Cross-browser playback (explicit Play, `currentTime` advances) | Chromium: plays (WebM; the Playwright Chromium build has no H.264, so the MP4 fallback was not exercised here). Firefox: plays. WebKit: plays. All show 1920x1080 and no `error`. |
+| Poster before play | Poster, play button and `data-state="poster"` present in all 3 engines at 1280 px (screenshot checked). Mobile Chromium at 360 and 390 px: frame is 16:9 (ratio 0.563), no horizontal overflow. |
+| Reduced motion | `reduce`: no autoplay, no media request in view, controls hidden. Keyboard Enter on Play starts playback with sound and captions shown, and the play button hides. Same result in Chromium, Firefox and WebKit. |
+| Autoplay when in view (no-preference) | Muted, looped, controls on, only while in view; pauses when scrolled away. Same in all 3 engines. |
+| Accessibility | axe (wcag2a/aa, wcag21a/aa) on the video section at both motion settings: 0 violations (Chromium). Keyboard: Play is reachable and Enter starts playback in all 3 engines. Transcript `<details>` is text. |
+| No video request before interaction or visibility | **FAIL in WebKit.** Chromium and Firefox: 0 media requests before the video is in view. WebKit: `sizzler.webm` is requested at load, with the video about 1650 px below the fold. See BUG-005. |
+| No CLS | Chromium: CLS 0.0000 over a full scroll of the page at 1280 and 390 px. |
+| First load / LCP / weight (Chromium) | First load 58 KB over 10 requests, no video request. Poster (35.6 KB) and VTT (0.6 KB) are fetched at load; the poster is an image and is not video bytes, but it could be lazy-loaded. LCP is the H1 at 172 ms (desktop) and the hero paragraph at 131 ms (390 px). The video does not affect LCP. |
+| Mobile WebKit (iPhone 13 emulation) | **Page `load` never fires** and the play button is unreachable with the video present. See BUG-006 (not verified on a real iOS device). |
+
+## Frame and copy review
+
+Reviewed a 4x4 contact sheet of the MP4 (every 2.5 s), the poster, full-resolution frames at 16.5 s, 27.5 s and 37.5 s, and the caption file.
+
+- No typos in the on-screen copy or in `sizzler.vtt`.
+- No clipped headlines or cards. Mid-typing log text ("nav.", "Softwa") is intentional kinetic typography.
+- Colours stay on the token palette (dark ground, green accent, amber DevOps, blue Frontend, purple SEO).
+- **Real data (owner decision, not a render defect):** the billing frame at about 30 s shows the same spend figures as `billing-costs.webp` ($30.97, $11.56, $0.47, $0.40, $0.00, $0.00). The existing TODO(PO) in `src/data/site.ts` (line 16) covers this and applies to the video too. The overview frames and the poster show the path `D:\Projects\acme-storefront` and the project name "Acme Storefront". There is no username in the video, and "Acme Storefront" was treated as a demo name in the TASK-013 review. The PO should confirm the path and name are fine to publish.
+- Overlapping cues: see BUG-007.
+
+## Bugs filed (this run)
+
+- **BUG-005 (high, TASK-027, frontend_developer): WebKit requests `sizzler.webm` before interaction.** Repro: `qa/sizzler-browser-probe.mjs` (webkit `mediaBeforeInView`). Chromium and Firefox make no request. The WebKit load event takes about 3.5 s versus about 0.2 s elsewhere, which fits a full WebM download (not byte-verified). Fix: keep `<source>` children out of the markup until play or in-view (e.g. `data-src`, set in `src/scripts/sizzler.js`).
+- **BUG-006 (medium, TASK-028, frontend_developer): WebKit iPhone 13 emulation never reaches `load`.** The DOM is fully parsed, but `readyState` stays `interactive`, module scripts do not run and the play button is unreachable. Minimal-page bisect: a preload=none video with a source loads in about 3 s, but adding `controls` or a `<track>` makes it hang; removing all `<source>` children unblocks it. The stderr shows "Button failed to load, iconName = invalid-placard", which suggests the WebKit-GTK media-control icons on Linux. **Not verified on iOS Safari.** Needs a real iOS device or a device farm before it is treated as a user bug.
+- **BUG-007 (low, TASK-029, frontend_developer): overlapping caption cues.** Several cues overlap in `public/video/sizzler.vtt` (for example 00:02.800–00:04.267 with 00:03.000–00:04.667, and 00:09.200–00:14.967 with 00:09.400–00:11.000). Two captions show at once when the track is on. Fix in the render timings, not by hand-editing the video.
+- **BUG-008 (low, TASK-030, ui_ux_designer): poster has a non-clickable "Download for Windows" pill.** It is burned-in image pixels above the real Play control. Remove it from the poster or make it the real download button.
+
+## Test stability
+
+The first full `npm test` (default workers) failed 3 to 5 Playwright tests each run (teardown timeouts and "Target page, context or browser has been closed"). The failing set changed between runs (nav anchor 360, imagery 390, CTA showcase, sizzler axe, sizzler poster-first). Each one passed on rerun, and the full suite passed 31/31 with `--workers=2`. The cause is load on this 22-core sandbox with video decoding in parallel, not an assertion. Suggested fix (DevOps/QA): set `workers` in `playwright.config.ts` to a fixed low number on CI and locally, and reduce the per-test timeout pressure for the sizzler tests.
+
+## Notes
+
+- `qa/sizzler-browser-probe.mjs` is the repro for BUG-005 and BUG-006. It prints JSON and needs the preview server on port 4400.
+- The regenerated `qa/screenshots/home-*.png` from `npm test` were restored from git and not committed. The baselines are still an open decision (see the TASK-013 section).
+- Chromium here cannot decode H.264, so MP4 playback is verified only by ffprobe and full decode, not by a browser. Real Chrome and Safari should be checked on the MP4 path.
