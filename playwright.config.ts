@@ -19,7 +19,14 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /webkit-.*\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // TASK-028: the sizzler <video> once kept WebKit's load event from firing.
+      name: 'webkit-iphone13',
+      testMatch: /webkit-.*\.spec\.ts/,
+      use: { ...devices['iPhone 13'] },
     },
   ],
   webServer: {

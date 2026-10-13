@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "test": "npm run build && node --test tests/ && playwright test",
     "test:e2e": "playwright test",
-    "test:setup": "playwright install --with-deps chromium",
+    "test:setup": "playwright install --with-deps chromium webkit",
     "render:sizzler": "node tools/sizzler/render.mjs"
   },
   "dependencies": {

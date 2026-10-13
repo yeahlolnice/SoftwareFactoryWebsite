@@ -4,7 +4,7 @@ Static marketing site for the Software Factory Windows desktop app (a tool for m
 
 ## Requirements
 
-Node.js 20+ and npm. Playwright's Chromium for the browser tests (`npm run test:setup`).
+Node.js 20+ and npm. Playwright's Chromium and WebKit for the browser tests (`npm run test:setup`).
 
 ## Commands
 

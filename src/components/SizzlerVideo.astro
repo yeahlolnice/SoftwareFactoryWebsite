@@ -21,13 +21,17 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
           preload="none"
           muted
           playsinline
-          controls
           aria-label={sizzler.title}
           aria-describedby="sizzler-transcript"
-        >
+        ></video>
+        {/*
+          sizzler.js moves the sources and captions into the video on first play and turns on controls. A video that
+          ships with a source plus controls or a track keeps the load event from firing in WebKit (TASK-028).
+        */}
+        <template data-sizzler-media>
           {sizzler.sources.map((s) => <source src={s.src} type={s.type} />)}
           <track kind="captions" src={sizzler.captions.src} srclang={sizzler.captions.srclang} label={sizzler.captions.label} />
-        </video>
+        </template>
         <Button variant="primary" size="lg" icon="play" class="sizzler__play">{sizzler.playLabel}</Button>
       </div>
       <details class="sizzler__transcript" id="sizzler-transcript">
@@ -46,6 +50,9 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
           }
         </ol>
       </details>
+      <noscript>
+        <p class="sizzler__fallback"><a href={sizzler.sources[0].src}>{sizzler.playLabel}</a></p>
+      </noscript>
     </div>
   </div>
 </section>
@@ -108,6 +115,9 @@ const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60))
   }
   .sizzler__transcript[open] summary :global(svg) {
     transform: rotate(180deg);
+  }
+  .sizzler__fallback {
+    margin-top: var(--space-3);
   }
   .sizzler__cues {
     display: grid;
