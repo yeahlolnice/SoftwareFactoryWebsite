@@ -17,7 +17,7 @@ const ogImage = new URL(site.seo.ogImage, site.siteUrl).href;
 ---
 
 <!doctype html>
-<html lang={site.locale}>
+<html lang={site.locale} data-gtm-id={site.analytics.gtmId}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,6 +44,9 @@ const ogImage = new URL(site.seo.ogImage, site.siteUrl).href;
     <meta name="twitter:image:alt" content={site.seo.ogImageAlt} />
     <script is:inline>
       document.documentElement.classList.add('js');
+    </script>
+    <script>
+      import '../scripts/analytics.js';
     </script>
     <slot name="head" />
   </head>

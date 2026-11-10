@@ -48,6 +48,19 @@ test('built pages have no inline styles (style-src is self-only)', () => {
   }
 });
 
+test('Google Tag Manager is wired up without inline script and the CSP allows it', () => {
+  const html = readFileSync(new URL('dist/index.html', root), 'utf8');
+  assert.match(html, /<html[^>]* data-gtm-id="GTM-[A-Z0-9]+"/);
+  assert.doesNotMatch(html, /googletagmanager\.com\/gtm\.js/, 'GTM must load from the external analytics bundle, not inline markup');
+  const directive = (name) => csp.match(new RegExp(`(?:^|; )${name} ([^;]+)`))?.[1] ?? '';
+  assert.match(directive('script-src'), /https:\/\/www\.googletagmanager\.com/);
+  assert.doesNotMatch(directive('script-src'), /'unsafe-inline'|'unsafe-eval'/);
+  for (const host of ['https://\\*\\.google-analytics\\.com', 'https://\\*\\.analytics\\.google\\.com', 'https://\\*\\.googletagmanager\\.com']) {
+    assert.match(directive('connect-src'), new RegExp(host));
+  }
+  assert.match(directive('img-src'), /https:\/\/\*\.google-analytics\.com/);
+});
+
 test('CSP allows same-origin media for the sizzler video', () => {
   assert.match(csp, /media-src 'self'(;|$)/);
 });

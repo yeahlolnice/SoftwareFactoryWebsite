@@ -187,9 +187,12 @@ export interface Site {
     logoLabel: string;
     proofLabel: string;
   };
+  /** Google Tag Manager container. Changing GTM's hosts or adding tags that load other domains needs a CSP update in nginx.conf and public/web.config. */
+  analytics: { gtmId: string };
   footer: {
     columns: { heading: string; links: Link[] }[];
     supportText: string;
+    privacyNote: string;
     copyright: string;
   };
   notFound: { title: string; heading: string; body: string; homeCta: string };
@@ -668,8 +671,11 @@ export const site: Site = {
       },
     ],
     supportText,
+    privacyNote: 'This site uses Google Tag Manager and Google Analytics to count visits and downloads.',
     copyright: 'All rights reserved.',
   },
+
+  analytics: { gtmId: 'GTM-P8QGT724' },
 
   social: [],
 };

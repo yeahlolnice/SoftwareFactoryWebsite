@@ -56,12 +56,19 @@ The installer is served from `/downloads/` on the same site and is not in this r
 2. Copy `target\release\bundle\nsis\AI Software Factory_<version>_x64-setup.exe` to `downloads\software-factory-<version>-setup.exe` in the IIS site folder.
 3. Set `version` in `src/data/site.ts` (the download URL is built from it), rebuild and redeploy `dist/`. Keep the `downloads` folder when replacing the site files.
 
+## Analytics (Google Tag Manager)
+
+The container ID is `analytics.gtmId` in `src/data/site.ts` (empty string turns tracking off). `src/scripts/analytics.js` loads GTM from an external bundle, so the CSP needs no inline script, and pushes a `download_click` event to the `dataLayer` whenever an installer link (`data-cta="download"`) is clicked, with `file_name`, `link_url`, `link_text` and `cta_location`.
+
+- In GTM, track downloads with a **Custom Event** trigger named `download_click` feeding a GA4 Event tag; add Data Layer Variables for the fields above.
+- The CSP in `nginx.conf` and `public/web.config` allows Google Tag Manager and GA4 only. GTM **Custom HTML** tags and tags that load other domains (ads pixels and so on) are blocked until both CSPs allow them.
+- The footer's `footer.privacyNote` says the site uses GTM/GA; update it if you add other tags.
+
 ## Owner-supplied items (not yet provided)
 
 1. Screenshots: none supplied. The hero uses a CSS-only app mock. Real screenshots can be added under `public/` and wired in via `src/data/site.ts` and the components. A product-specific `public/og.png` (social preview) is also worth replacing.
 2. Product name, company name, tagline: `productName`, `companyName`, `tagline` are placeholders.
-3. Analytics: none is installed. Adding a provider requires updating the CSP in `nginx.conf` and `public/web.config` (`script-src`, `connect-src`) and the privacy wording.
-4. Copy to confirm: How it works steps, feature claims, FAQ answers (platforms, code safety, pricing, support), system requirements (RAM/storage), support/contact text.
+3. Copy to confirm: How it works steps, feature claims, FAQ answers (platforms, code safety, pricing, support), system requirements (RAM/storage), support/contact text.
 
 ## QA
 
