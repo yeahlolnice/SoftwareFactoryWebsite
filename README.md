@@ -46,14 +46,22 @@ docker compose up --build
 
 The image builds the site with Node and serves `dist/` with `nginx.conf`, which sets the security headers, including a strict CSP (`style-src 'self'`, no inline styles). The only executable inline script is the tiny `html.js` marker in `src/layouts/Base.astro`, allowed by hash. If you edit it, regenerate its `sha256` in `nginx.conf`; `tests/security-headers.test.mjs` fails when the hash drifts. The page also contains two inline `application/ld+json` blocks (SEO structured data); these are data, not executed, so CSP `script-src` does not apply to them. All other scripts are bundled as external files.
 
+## IIS hosting
+
+The live site (https://softwarefactory.yeahlolnice.com) runs on IIS. `public/web.config` is copied into `dist/` by the build and sets the same security headers as `nginx.conf`, plus MIME types, cache headers and the 404 page. `tests/security-headers.test.mjs` fails if the two drift. Deploy by copying the contents of `dist/` to the IIS site folder.
+
+The installer is served from `/downloads/` on the same site and is not in this repo. For each release:
+
+1. In the app repo, set the version in `src-tauri/tauri.conf.json`, `package.json` and the root `Cargo.toml`, then run `npm run app:build`.
+2. Copy `target\release\bundle\nsis\AI Software Factory_<version>_x64-setup.exe` to `downloads\software-factory-<version>-setup.exe` in the IIS site folder.
+3. Set `version` in `src/data/site.ts` (the download URL is built from it), rebuild and redeploy `dist/`. Keep the `downloads` folder when replacing the site files.
+
 ## Owner-supplied items (not yet provided)
 
-1. Real download URL: `download.url` is `https://example.com/downloads/software-factory-setup.exe`. Also set the real `download.version`; the hero currently shows "v0.0.0 (placeholder)".
-2. Screenshots: none supplied. The hero uses a CSS-only app mock. Real screenshots can be added under `public/` and wired in via `src/data/site.ts` and the components. A product-specific `public/og.png` (social preview) is also worth replacing.
-3. Product name, company name, tagline: `productName`, `companyName`, `tagline` are placeholders.
-4. Site URL: `siteUrl` is `https://example.com`; it drives the canonical URL, sitemap, robots.txt and structured data.
-5. Analytics: none is installed. Adding a provider requires updating the CSP in `nginx.conf` (`script-src`, `connect-src`) and the privacy wording.
-6. Copy to confirm: How it works steps, feature claims, FAQ answers (platforms, code safety, pricing, support), system requirements (RAM/storage), support/contact text.
+1. Screenshots: none supplied. The hero uses a CSS-only app mock. Real screenshots can be added under `public/` and wired in via `src/data/site.ts` and the components. A product-specific `public/og.png` (social preview) is also worth replacing.
+2. Product name, company name, tagline: `productName`, `companyName`, `tagline` are placeholders.
+3. Analytics: none is installed. Adding a provider requires updating the CSP in `nginx.conf` and `public/web.config` (`script-src`, `connect-src`) and the privacy wording.
+4. Copy to confirm: How it works steps, feature claims, FAQ answers (platforms, code safety, pricing, support), system requirements (RAM/storage), support/contact text.
 
 ## QA
 

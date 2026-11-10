@@ -16,6 +16,16 @@ test('nginx sends the required security headers', () => {
   assert.match(csp, /frame-ancestors 'none'/);
 });
 
+test('IIS web.config sends the same security headers as nginx.conf', () => {
+  const webConfig = readFileSync(new URL('public/web.config', root), 'utf8');
+  const iis = Object.fromEntries([...webConfig.matchAll(/<add name="([^"]+)" value="([^"]*)" \/>/g)].map((m) => [m[1], m[2]]));
+  const nginx = Object.fromEntries([...nginxConf.matchAll(/add_header ([\w-]+) "([^"]*)" always;/g)].map((m) => [m[1], m[2]]));
+  for (const name of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Content-Security-Policy']) {
+    assert.equal(iis[name], nginx[name], `${name} differs between public/web.config and nginx.conf`);
+  }
+  assert.match(webConfig, /<remove name="X-Powered-By" \/>/);
+});
+
 test('CSP allows the hash of every inline script in the built pages', () => {
   const allowed = new Set([...csp.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]));
   const missing = [];

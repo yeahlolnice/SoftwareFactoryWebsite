@@ -2,9 +2,7 @@
 //
 // PLACEHOLDERS: values the product owner must supply or confirm before launch.
 // Each is also marked TODO(PO) next to its value below.
-//   - productName, companyName, tagline, siteUrl: identity and canonical origin (example.com until set)
-//   - download.url: real installer URL (currently example.com)
-//   - download.version: installer version (currently v0.0.0)
+//   - productName, companyName, tagline: identity
 //   - download.platformNote, download.requirements: confirm Windows 10/11 support; add RAM/storage if known
 //   - faq.items.platforms, faq.items.code-safe: confirm wording
 //   - faq.items.pricing: placeholder answer, no pricing yet
@@ -203,9 +201,6 @@ export const PLACEHOLDERS = [
   'productName',
   'companyName',
   'tagline',
-  'siteUrl',
-  'download.url',
-  'download.version',
   'download.platformNote',
   'download.requirements',
   'howItWorks.steps',
@@ -218,8 +213,11 @@ export const PLACEHOLDERS = [
 ] as const;
 
 const productName = 'Software Factory'; // TODO(PO)
-const downloadUrl = 'https://example.com/downloads/software-factory-setup.exe'; // TODO(PO)
-const version = 'v0.0.0'; // TODO(PO)
+const siteUrl = 'https://softwarefactory.yeahlolnice.com';
+// Installer built by `npm run app:build` in the app repo, renamed and copied to /downloads/ on the IIS site.
+// Bump both together for each release: the file name carries the version.
+const version = 'v0.1.0';
+const downloadUrl = `${siteUrl}/downloads/software-factory-${version.slice(1)}-setup.exe`;
 const platformNote = 'Windows 10/11, 64-bit'; // TODO(PO): confirm supported Windows versions
 const supportText = 'Contact details coming soon.'; // TODO(PO)
 
@@ -240,7 +238,7 @@ export const site: Site = {
   productName,
   companyName: 'Software Factory', // TODO(PO)
   tagline: 'Run a whole team of AI agents.', // TODO(PO)
-  siteUrl: 'https://example.com', // TODO(PO)
+  siteUrl,
   locale: 'en',
 
   download: {
@@ -252,6 +250,8 @@ export const site: Site = {
     requirementsLabel: 'System requirements',
     requirements: [
       { label: 'Operating system', value: 'Windows 10 or Windows 11, 64-bit' }, // TODO(PO): add RAM and storage once confirmed
+      { label: 'Also needs', value: 'Docker Desktop (running) and Git for Windows' },
+      { label: 'First launch', value: 'The installer is unsigned: if Windows SmartScreen appears, choose More info, then Run anyway' },
     ],
     eyebrow: 'Download',
     heading: 'Put your AI team to work',
@@ -280,7 +280,7 @@ export const site: Site = {
     lead: `${productName} lets you assemble AI agents with real roles — project manager, designer, developers, QA — hand them a goal, and watch them plan, build, test and deliver. You stay in charge of the plan; they do the work.`,
     primaryCta: { label: 'Download for Windows', href: downloadUrl, icon: 'windows', external: true },
     secondaryCta: { label: 'See how it works', href: '#how-it-works' },
-    microcopy: `${version} (placeholder) · ${platformNote}`,
+    microcopy: `${version} · ${platformNote}`,
   },
 
   mock: {
